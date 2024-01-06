@@ -4,7 +4,8 @@
 					"App\\": "app/",
 					"App\\Controllers\\": "app/Controllers",
 					"App\\Models\\": "app/Models",
-					"App\\Exceptions\\": "app/Exceptions"
+					"App\\Exceptions\\": "app/Exceptions",
+					"App\\Traits\\": "app/Traits"
 			}
 	}
 }
