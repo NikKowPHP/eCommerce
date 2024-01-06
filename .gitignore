@@ -1,2 +1,6 @@
 #phpUnit cache
+src/.phpunit*
 src/.phpunit.result.cache
+src/vendor/*
+src/vendor/composer/*
+src/app/.phpunit.result.cache
