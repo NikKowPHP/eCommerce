@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
 namespace App;
 
-declare(strict_types=1);
 class Router
 {
 	protected $routes = [];
@@ -10,12 +10,13 @@ class Router
 	{
 		$this->routes = $routes;
 	}
-	public function handleRequest(string $method, string $uri):void
+	public function handleRequest(string $method, string $uri):mixed
 	{
 		$route = $method .' '.$uri;
 		if(array_key_exists($route, $this->routes)) {
 			return $this->handleRoute($this->routes[$route]);
 		}
+		return null;
 	}
 	protected function handleRoute(string $handler):mixed
 	{
