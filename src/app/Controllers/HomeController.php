@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 namespace App\Controllers;
 
-declare(strict_types=1);
-class HomeController
+class HomeController extends AbstractController
 {
-	public function index():void
+	public function index(): void
 	{
-		echo "Home controller index";
+		$viewPath = __DIR__ . '/../Views/home.php';
+		$this->includeView($viewPath);
 	}
 }
