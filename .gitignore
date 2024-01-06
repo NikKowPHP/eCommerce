@@ -1,2 +1,2 @@
 #phpUnit cache
-src/.phpunit*
+src/.phpunit.result.cache
