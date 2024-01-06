@@ -6,17 +6,15 @@ use App\Exceptions\ViewNotFoundException;
 
 trait ViewPathTrait 
 {
-	protected function includeView(string $viewPath): bool
+	protected function includeView(string $viewPath): void
 	{
 		try {
 			if (!file_exists($viewPath)) {
 				throw new ViewNotFoundException(basename($viewPath), $viewPath);
 			}
 			include $viewPath;
-			return true;
 		} catch (ViewNotFoundException $e) {
 			echo $e->getMessage();
-			return false;
 		}
 	}
 }
