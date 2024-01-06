@@ -3,10 +3,8 @@
 			"psr-4": {
 					"App\\": "app/",
 					"App\\Controllers\\": "app/Controllers",
-					"App\\Models\\": "app/Models"
+					"App\\Models\\": "app/Models",
+					"App\\Exceptions\\": "app/Exceptions"
 			}
-	},
-	"require": {
-		"twbs/bootstrap": "^5.3"
 	}
 }
