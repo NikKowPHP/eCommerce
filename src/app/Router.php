@@ -4,27 +4,48 @@ namespace App;
 
 class Router
 {
-	protected $routes = [];
-	
+	protected array $routes = [];
+	protected int $parametr;
+
 	public function __construct(array $routes)
 	{
 		$this->routes = $routes;
 	}
-	public function handleRequest(string $method, string $uri):mixed
+	public function handleRequest(string $method, string $uri): mixed
 	{
-		$route = $method .' '.$uri;
-		if(array_key_exists($route, $this->routes)) {
-			return $this->handleRoute($this->routes[$route]);
+		foreach ($this->routes as $route => $handler) {
+			if ($this->matchRoute($route, $method, $uri)) {
+				return $this->handleRoute($handler);
+			}
 		}
 		return null;
 	}
-	protected function handleRoute(string $handler):mixed
+	protected function matchRoute(string $route, string $method, string $uri): bool
 	{
-		list($controller, $action) = explode('@',$handler);
+		[$routeMethod, $routeUri] = explode(' ', $route);
+		if ($method !== $routeMethod) {
+			return false;
+		}
+		if (strpos($routeUri, '{') !== false) {
+			$pattern = preg_replace('/\/{\w+}/', '/(\w+)', $routeUri);
+			$pattern = str_replace('/', '\/', $pattern);
+			if (preg_match('/^' . $pattern . '$/', $uri, $matches)) {
+				$_GET['id'] = $matches[1];
+				$this->parametr = (int) $matches[1];
+				return true;
+			}
+			return false;
+		}
+		return $uri === $routeUri;
+	}
+	protected function handleRoute(string $handler): mixed
+	{
+		list($controller, $action) = explode('@', $handler);
 		$namespace = 'App\Controllers\\';
 		$controller = $namespace . $controller;
-		$controllerInstance = new $controller;
-		return $controllerInstance->$action();
+		$controllerInstance = new $controller();
+		$param = isset($this->parametr) ? $this->parametr : null;
+		return $controllerInstance->$action($param);
 	}
 
 
