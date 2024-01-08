@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Database;
 
 class DatabasePopulator
 {
@@ -70,8 +70,12 @@ class DatabasePopulator
 				"INSERT INTO carts (user_id) VALUES (1)",
 				"INSERT INTO cart_items (cart_id, product_id) VALUES (1,1)",
 			];
+			foreach ($insertQueries as $insertion) {
+				$pdo->exec($insertion);
+
+			}
 			echo "Initial data inserted successfully";
-		} catch(\PDOException $e) {
+		} catch (\PDOException $e) {
 			echo "Error inserting initial data: " . $e->getMessage();
 		}
 	}
