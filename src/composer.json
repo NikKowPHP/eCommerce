@@ -7,7 +7,7 @@
 					"App\\Exceptions\\": "app/Exceptions",
 					"App\\Traits\\": "app/Traits",
 					"App\\Helpers\\": "app/Helpers",
-					"App\\Database\\": "app/database"
+					"App\\Database\\": "app/Database"
 
 			}
 	}
