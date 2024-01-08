@@ -16,6 +16,49 @@ abstract class Model
 	{
 		$this->database = new Database();
 	}
+
+	public function findAll(): array
+	{
+		try {
+			$this->initDatabase();
+			$pdo = $this->database->getConnection();
+			$query = "SELECT * FROM " . $this->getTableName();
+			$stmt = $pdo->prepare($query);
+			$stmt->execute();
+			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+
+			if ($allData) {
+				return $this->convertRows($allData);
+			}
+			return [];
+		} catch (\PDOException $e) {
+			echo "connection failed: " . $e->getMessage();
+			return [];
+		}
+	}
+	public function findAllBy(string $where, string|int $value): array
+	{
+		try {
+			$this->initDatabase();
+			$pdo = $this->database->getConnection();
+			$query = "SELECT * FROM " . $this->getTableName() . " WHERE $where = $value";
+			$stmt = $pdo->prepare($query);
+			$stmt->execute();
+			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+			$convertedData = $this->convertRows($allData);
+			if($convertedData) {
+				return array_map(function($item){
+					return $this->instantiate($item);
+				}, $convertedData);
+			}
+
+			return [];
+		} catch (\PDOException $e) {
+			echo "connection failed: " . $e->getMessage();
+			return [];
+		}
+	}
+
 	public function read(int $id): ?static
 	{
 		try {
@@ -26,7 +69,7 @@ abstract class Model
 			$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 			$stmt->execute();
 			$foundData = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-			if($foundData) {
+			if ($foundData) {
 				$foundData = $this->convertRow($foundData);
 			}
 			$this->instantiate($foundData);
@@ -64,6 +107,12 @@ abstract class Model
 			$convertedRow[$key] = $this->castProp($value);
 		}
 		return $convertedRow;
+	}
+	protected function convertRows(array $rows): array
+	{
+		return array_map(function ($row) {
+			return $this->convertRow($row);
+		}, $rows);
 	}
 	abstract protected function getTableName(): string;
 }
