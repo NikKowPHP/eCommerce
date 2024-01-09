@@ -41,17 +41,18 @@ abstract class Model
 		try {
 			$this->initDatabase();
 			$pdo = $this->database->getConnection();
-			$query = "SELECT * FROM " . $this->getTableName() . " WHERE $where = $value";
+			$query = "SELECT * FROM " . $this->getTableName() . " WHERE $where = :value";
 			$stmt = $pdo->prepare($query);
+			$stmt->bindParam(':value', $value);
 			$stmt->execute();
 			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 			$convertedData = $this->convertRows($allData);
-			if($convertedData) {
-				return array_map(function($item){
-					return $this->instantiate($item);
+			if ($convertedData) {
+					return array_map(function ($item) {
+						$instance = new static();
+						return $instance->instantiate($item);
 				}, $convertedData);
 			}
-
 			return [];
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
