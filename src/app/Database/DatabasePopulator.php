@@ -22,9 +22,9 @@ class DatabasePopulator
           )",
 				"CREATE TABLE IF NOT EXISTS images (
 					id INT AUTO_INCREMENT PRIMARY KEY,
-					product_id INT NOT NULL,
-					image_url VARCHAR(255) NOT NULL,
-					FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE )",
+					productId INT NOT NULL,
+					imageUrl VARCHAR(255) NOT NULL,
+					FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE )",
 
 				"CREATE TABLE IF NOT EXISTS users (
 						id INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,17 +33,17 @@ class DatabasePopulator
 				)",
 				"CREATE TABLE IF NOT EXISTS carts (
 						id INT AUTO_INCREMENT PRIMARY KEY,
-						user_id INT NOT NULL,
-						created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (user_id) REFERENCES users(id)
+						userId INT NOT NULL,
+						createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (userId) REFERENCES users(id)
 				)",
 				"CREATE TABLE IF NOT EXISTS cart_items (
 						id INT AUTO_INCREMENT PRIMARY KEY,
-						cart_id INT NOT NULL,
-						product_id INT NOT NULL,
+						cartId INT NOT NULL,
+						productId INT NOT NULL,
 						quantity INT DEFAULT 1,
-						FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
-						FOREIGN KEY (product_id) REFERENCES products(id)
+						FOREIGN KEY (cartId) REFERENCES carts(id) ON DELETE CASCADE,
+						FOREIGN KEY (productId) REFERENCES products(id)
 				)",
 			];
 			foreach ($queries as $query) {
@@ -62,13 +62,13 @@ class DatabasePopulator
 			$insertQueries = [
 				"INSERT INTO products (name, description, price) VALUES 
                     ('Product 1', 'Description 1', 19.99)",
-				"INSERT INTO images (product_id, image_url) VALUES 
+				"INSERT INTO images (productId, imageUrl) VALUES 
                     (1, 'path_to_image_1.jpg'), 
                     (1, 'path_to_image_2.jpg')",
 				"INSERT INTO users (username, email) VALUES 
                     ('user1', 'user1@example.com')",
-				"INSERT INTO carts (user_id) VALUES (1)",
-				"INSERT INTO cart_items (cart_id, product_id) VALUES (1,1)",
+				"INSERT INTO carts (userId) VALUES (1)",
+				"INSERT INTO cart_items (cartId, productId) VALUES (1,1)",
 			];
 			foreach ($insertQueries as $insertion) {
 				$pdo->exec($insertion);
@@ -78,5 +78,27 @@ class DatabasePopulator
 		} catch (\PDOException $e) {
 			echo "Error inserting initial data: " . $e->getMessage();
 		}
+	}
+	public function dropTables():void
+	{
+		try {
+			$pdo = $this->database->getConnection();
+
+			$tablesToDrop = [
+				'cart_items',
+				'carts',
+				'images',
+				'products',
+				'users',
+			];
+			foreach ($tablesToDrop as $table) {
+				$pdo->exec("DROP TABLE IF EXISTS $table");
+
+			}
+			echo "TABLES DROP SUCCESSFULLY";
+		} catch (\PDOException $e) {
+			echo "Error inserting initial data: " . $e->getMessage();
+		}
+
 	}
 }
