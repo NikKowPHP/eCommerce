@@ -8,22 +8,26 @@ use App\Models\Model;
 class Image extends Model
 {
 	private int $id;
-	private int $product_id;
-	private string $image_url;
-	public function getTableName():string
+	private int $productId;
+	private string $imageUrl;
+	public function getTableName(): string
 	{
 		return 'images';
 	}
-	public function setId(int $id):void
+	public function setId(int $id): void
 	{
 		$this->id = $id;
 	}
-	public function setProductId(int $product_id):void
+	public function setProductId(int $productId): void
 	{
-		$this->product_id = $product_id;
+		$this->productId = $productId;
 	}
-	public function setImageUrl(string $image_url):void
+	public function setImageUrl(string $imageUrl): void
 	{
-		$this->image_url= $image_url;
+		$this->imageUrl = $imageUrl;
+	}
+	public function getImageUrl(): string
+	{
+		return $this->imageUrl;
 	}
 }
