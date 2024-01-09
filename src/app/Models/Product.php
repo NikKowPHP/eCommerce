@@ -45,6 +45,14 @@ class Product extends Model
 	{
 		$this->price = $price;
 	}
+	public function setImages(array $images):void
+	{
+		$this->images = $images;
+	}
+	public function getImages():array
+	{
+		return $this->images;
+	}
 	public function getName():string
 	{
 		return $this->name;
