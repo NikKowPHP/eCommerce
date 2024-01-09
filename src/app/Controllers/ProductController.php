@@ -17,9 +17,8 @@ class ProductController extends AbstractController
 		$product = new Product();
 		$product->read($id);
 		$image = new Image();
-		$images = $image->findAllBy('product_id', $id);
-		print_r($images);
-
+		$images = $image->findAllBy('productId', $id);
+		$product->setImages($images);
 		$viewPath = __DIR__ . '/../Views/product.php';
 		$this->includeView($viewPath, ['product' => $product]);
 	}
