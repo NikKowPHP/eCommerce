@@ -32,6 +32,13 @@ class Cart extends Model
 	{
 		$cartItem = new CartItem();
 		$cartItems = $cartItem->findAllBy('cartId', $this->id);
+
+		// Instantiate product inside cartItem
+		$cartItems = array_map(function ($cartItem) {
+			$cartItem->findProduct();
+			return $cartItem;
+		}, $cartItems);
+
 		$this->setItems($cartItems);
 		return $cartItems;
 	}

@@ -8,7 +8,7 @@
 <div>
 	<?php foreach($cart->getItems() as $item): ?>
 
-		<h1> product id <?= $item->getProductId() ?></h1>
+		<h1>  <?= $item->getProduct()->getName() ?></h1>
 		<h1> quantity <?= $item->getQuantity() ?></h1>
 
 		<?php endforeach; ?>
