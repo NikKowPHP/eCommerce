@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Model;
+use App\Models\Product;
 
 
 class CartItem extends Model
@@ -11,6 +12,8 @@ class CartItem extends Model
 	private int $cartId;
 	private int $productId;
 	private int $quantity;
+	private Product $product;
+
 	public function getTableName(): string
 	{
 		return 'cart_items';
@@ -34,6 +37,16 @@ class CartItem extends Model
 	 {
 			 return $this->quantity;
 	 }
+	public function getProduct(): Product
+	{
+		return $this->product;
+	}
+	public function findProduct(): void
+	{
+		$product = new Product();
+		$product->read($this->productId);
+		$this->product = $product;
+	}
 
 	 // Setters
 	 public function setId(int $id): void
