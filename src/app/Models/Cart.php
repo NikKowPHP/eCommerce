@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Model;
+use App\Models\CartItem;
 
 
 class Cart extends Model
@@ -10,6 +11,7 @@ class Cart extends Model
 	private int $id;
 	private int $userId;
 	private string $createdAt;
+	private array $items;
 	public function getTableName(): string
 	{
 		return 'carts';
@@ -25,5 +27,28 @@ class Cart extends Model
 	public function setCreatedAt(string $createdAt): void
 	{
 		$this->createdAt = $createdAt;
+	}
+	public function findItems(): array
+	{
+		$cartItem = new CartItem();
+		$cartItems = $cartItem->findAllBy('cartId', $this->id);
+		$this->setItems($cartItems);
+		return $cartItems;
+	}
+	public function setItems(array $items): void
+	{
+		$this->items = $items;
+	} 
+	public function getId(): int
+	{
+		return $this->id;
+	}
+	public function getUserId(): int
+	{
+		return $this->userId;
+	}
+	public function getItems(): array
+	{
+		return $this->items;
 	}
 }
