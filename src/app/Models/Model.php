@@ -31,7 +31,6 @@ abstract class Model
 					$fields[$fieldName] = $property->getValue($this);
 			}
 			unset($fields['database']);
-			unset($fields['registrationDate']);
 			$fieldNames = implode(', ', array_keys($fields));
 			$placeholders = ':' . implode(', :', array_keys($fields));
 
