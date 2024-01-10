@@ -28,6 +28,10 @@
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/contact', $uri) ?>
 					" href="/contact">contact</a></li>
+					<li class="nav-item"> <a class="
+					nav-link
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/cart', $uri) ?>
+					" href="/cart">cart</a></li>
 				</ul>
 			</nav>
 
