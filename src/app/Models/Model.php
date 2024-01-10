@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Database\Database;
+use ReflectionProperty;
 
 abstract class Model
 {
@@ -15,6 +16,40 @@ abstract class Model
 	protected function initDatabase(): void
 	{
 		$this->database = new Database();
+	}
+	protected function save(): bool
+	{
+		try {
+			$this->initDatabase();
+			$reflector = new \ReflectionClass($this);
+			$properties = $reflector->getProperties(ReflectionProperty::IS_PRIVATE);
+			$fields = [];
+			foreach ($properties as $property) {
+				$property->setAccessible(true);
+				$fieldName = $property->getName();
+				if ($fieldName !== 'id')
+					$fields[$fieldName] = $property->getValue($this);
+			}
+			unset($fields['database']);
+			unset($fields['registrationDate']);
+			$fieldNames = implode(', ', array_keys($fields));
+			$placeholders = ':' . implode(', :', array_keys($fields));
+
+			$pdo = $this->database->getConnection();
+			$query = "INSERT INTO " . $this->getTableName() . " ($fieldNames) VALUES ($placeholders)";
+			$stmt = $pdo->prepare($query);
+			foreach ($fields as $key => $value) {
+				$stmt->bindValue(":$key", $value);
+			}
+			$stmt->execute();
+
+			return true;
+
+		} catch (\PDOException $e) {
+			echo "connection failed: " . $e->getMessage();
+			return false;
+		}
+
 	}
 
 	public function findAll(): array
