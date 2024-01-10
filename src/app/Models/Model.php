@@ -48,9 +48,9 @@ abstract class Model
 			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 			$convertedData = $this->convertRows($allData);
 			if ($convertedData) {
-					return array_map(function ($item) {
-						$instance = new static();
-						return $instance->instantiate($item);
+				return array_map(function ($item) {
+					$instance = new static();
+					return $instance->instantiate($item);
 				}, $convertedData);
 			}
 			return [];
@@ -60,12 +60,14 @@ abstract class Model
 		}
 	}
 
-	public function read(int $id): ?static
+	public function read(int $id, ?string $column = null): ?static
 	{
 		try {
 			$pdo = $this->database->getConnection();
+			$query = "SELECT * FROM " . $this->getTableName() . " WHERE ";
 
-			$query = "SELECT * FROM " . $this->getTableName() . " WHERE id = :id";
+			$column ? $query .= "$column=:id" : $query .= "id = :id";
+
 			$stmt = $pdo->prepare($query);
 			$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 			$stmt->execute();
