@@ -3,6 +3,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Utils\Location;
+use App\Utils\SessionManager;
 
 class LoginController extends AbstractController
 {
@@ -23,7 +25,11 @@ class LoginController extends AbstractController
 			$user->read($email, 'email');
 			if ($user->getId())
 				if (password_verify($inputPassword, $user->getPassword())) {
-					echo 'it is working';
+					SessionManager::startSession();
+					SessionManager::regenerateSessionId();
+					SessionManager::setSessionValue('user_id', $user->getId());
+				SessionManager::setFlashMessage('success', 'You have successfully logged in');
+				Location::redirect('/');
 					// TODO: Session login , regenerate key, create a cookie
 				}
 

@@ -2,7 +2,10 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Helpers\NavigationHelper;
 use App\Models\User;
+use App\Utils\Location;
+use App\Utils\SessionManager;
 
 class RegisterController extends AbstractController
 {
@@ -22,10 +25,14 @@ class RegisterController extends AbstractController
 
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 			$user = new User($username, $email, $hashedPassword);
-			$user->register();
-
+			if ($user->register()) {
+				SessionManager::startSession();
+				SessionManager::regenerateSessionId();
+				SessionManager::setSessionValue('user_id', $user->getId());
+				SessionManager::setFlashMessage('success', 'You have successfully created an account');
+				Location::redirect('/');
+			}
 		}
-
 	}
 
 	public function index(): void
