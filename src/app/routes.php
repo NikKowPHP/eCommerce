@@ -9,4 +9,3 @@ $routes = [
 	'POST /users/signup' => 'RegisterController@register',
 	'POST /users/login' => 'LoginController@login',
 ];
-?>
