@@ -2,10 +2,11 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
-use App\Helpers\NavigationHelper;
+use App\Utils\Validator;
 use App\Models\User;
 use App\Utils\Location;
 use App\Utils\SessionManager;
+use App\Utils\Auth;
 
 class RegisterController extends AbstractController
 {
@@ -16,19 +17,15 @@ class RegisterController extends AbstractController
 			$email = trim($_POST['email']);
 			$password = $_POST['password'];
 
-			if (empty($username) || empty($email) || empty($password)) {
-
-			}
-			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
+			if (!Validator::validateRegistrationData($email, $password)) {
+				SessionManager::setFlashMessage('failure', 'Invalid email or password');
+				Location::redirect('/signup');
 			}
 
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 			$user = new User($username, $email, $hashedPassword);
-			SessionManager::startSession();
 			if ($user->register()) {
-				SessionManager::regenerateSessionId();
-				SessionManager::setSessionValue('user_id', $user->getId());
+				Auth::logIn($user->getId());
 				SessionManager::setFlashMessage('success', 'You have successfully created an account');
 				Location::redirect('/');
 			} else {

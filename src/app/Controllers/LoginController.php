@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Utils\Location;
 use App\Utils\SessionManager;
 use App\Utils\Auth;
+use App\Utils\Validator;
 
 class LoginController extends AbstractController
 {
@@ -15,8 +16,7 @@ class LoginController extends AbstractController
 			$email = trim($_POST['email']);
 			$inputPassword = $_POST['password'];
 
-			if (empty($email) || empty($inputPassword) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
+			if (!Validator::validateLoginData($email, $inputPassword)) {
 				// Handle validation errors
 				SessionManager::setFlashMessage('failure', 'Invalid email or password');
 				Location::redirect('/login');
