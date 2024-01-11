@@ -25,6 +25,16 @@ class SessionManager
 	{
 		unset($_SESSION);
 	}
+	public static function setFlashMessage(string $key, string $message): void
+	{
+		$_SESSION['flash_messages'][$key] = $message;
+	}
+	public static function getFlashMessage(string $key): ?string
+	{
+		$message = $_SESSION['flash_messages'][$key] ?? null;
+		unset($_SESSION['flash_messages'][$key]);
+		return $message;
+	}
 	
 
 }
