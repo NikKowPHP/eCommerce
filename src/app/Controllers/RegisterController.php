@@ -25,12 +25,16 @@ class RegisterController extends AbstractController
 
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 			$user = new User($username, $email, $hashedPassword);
+			SessionManager::startSession();
 			if ($user->register()) {
-				SessionManager::startSession();
 				SessionManager::regenerateSessionId();
 				SessionManager::setSessionValue('user_id', $user->getId());
 				SessionManager::setFlashMessage('success', 'You have successfully created an account');
 				Location::redirect('/');
+			} else {
+				SessionManager::setFlashMessage('failure', 'Registration has failed, check the credentials');
+				Location::redirect('/signup');
+
 			}
 		}
 	}

@@ -28,9 +28,13 @@ class LoginController extends AbstractController
 					SessionManager::startSession();
 					SessionManager::regenerateSessionId();
 					SessionManager::setSessionValue('user_id', $user->getId());
-				SessionManager::setFlashMessage('success', 'You have successfully logged in');
-				Location::redirect('/');
+					SessionManager::setFlashMessage('success', 'You have successfully logged in');
+					Location::redirect('/');
 					// TODO: Session login , regenerate key, create a cookie
+				} else {
+					SessionManager::setFlashMessage('failure', 'The provided credentials have not found, try again');
+					Location::redirect('/login');
+
 				}
 
 		}
