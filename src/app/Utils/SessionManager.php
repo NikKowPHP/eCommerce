@@ -5,25 +5,25 @@ namespace App\Utils;
 
 class SessionManager
 {
-	public static function startSession():void
+	public static function startSession(): void
 	{
 		session_start();
 	}
-	public static function regenerateSessionId():void
+	public static function regenerateSessionId(): void
 	{
 		session_regenerate_id(true);
 	}
-	public static function setSessionValue(string $key, $value):void
+	public static function setSessionValue(string $key, $value): void
 	{
 		$_SESSION[$key] = $value;
 	}
 	public static function getSessionValue(string $key)
 	{
-		return $_SESSION[$key]?? null;
+		return $_SESSION[$key] ?? null;
 	}
-	public static function destroySession():void
+	public static function destroySession(): void
 	{
-		unset($_SESSION);
+		session_destroy();
 	}
 	public static function setFlashMessage(string $key, string $message): void
 	{
@@ -31,10 +31,10 @@ class SessionManager
 	}
 	public static function getFlashMessage(string $key): ?string
 	{
-		$message = $_SESSION['flash_messages'][$key] ?? null;
-		unset($_SESSION['flash_messages'][$key]);
-		return $message;
+		if ($message = $_SESSION['flash_messages'][$key] ?? null) {
+			unset($_SESSION['flash_messages'][$key]);
+			return $message;
+		}
+		return null;
 	}
-	
-
 }
