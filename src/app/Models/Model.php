@@ -94,16 +94,16 @@ abstract class Model
 		}
 	}
 
-	public function read(int $id, ?string $column = null): ?static
+	public function read(int|string $value, ?string $column = null): ?static
 	{
 		try {
 			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName() . " WHERE ";
 
-			$column ? $query .= "$column=:id" : $query .= "id = :id";
+			$column ? $query .= "$column=:value" : $query .= "id= :value";
 
 			$stmt = $pdo->prepare($query);
-			$stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+			$stmt->bindParam(':value', $value);
 			$stmt->execute();
 			$foundData = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
 			if ($foundData) {
