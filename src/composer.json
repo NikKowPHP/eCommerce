@@ -6,6 +6,7 @@
 					"App\\Models\\": "app/Models",
 					"App\\Exceptions\\": "app/Exceptions",
 					"App\\Traits\\": "app/Traits",
+					"App\\Utils\\": "app/Utils",
 					"App\\Helpers\\": "app/Helpers",
 					"App\\Database\\": "app/Database"
 
