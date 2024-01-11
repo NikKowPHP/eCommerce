@@ -32,6 +32,14 @@
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/cart', $uri) ?>
 					" href="/cart">cart</a></li>
+					<li class="nav-item"> <a class="
+					nav-link
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/signup', $uri) ?>
+					" href="/signup">signup</a></li>
+					<li class="nav-item"> <a class="
+					nav-link
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/login', $uri) ?>
+					" href="/login">login</a></li>
 				</ul>
 			</nav>
 
