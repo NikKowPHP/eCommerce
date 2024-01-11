@@ -19,11 +19,8 @@ class RegisterController extends AbstractController
 			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 			}
-			$salt = random_bytes(16);
 
-			$saltedPassword = $password . $salt;
-
-			$hashedPassword = password_hash($saltedPassword, PASSWORD_DEFAULT);
+			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 			$user = new User($username, $email, $hashedPassword);
 			$user->register();
 
