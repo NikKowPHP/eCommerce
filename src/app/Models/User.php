@@ -83,13 +83,14 @@ class User extends Model
 	{
 		return 'users';
 	}
-	public function register(): void
+	public function register(): bool
 	{
 		
 		$this->registrationDate = date('Y-m-d H:i:s');
 		if($this->save()) {
-			echo 'IT IS SAVED';
+			return true;
 		}
+		return false;
 	}
 
 }
