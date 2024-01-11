@@ -14,18 +14,18 @@ class Router
 	public function handleRequest(string $method, string $uri): mixed
 	{
 		foreach ($this->routes as $route => $handler) {
-			if ($this->matchRoute($route, $method, $uri)) {
+			[$routeMethod, $routeUri] = explode(' ', $route);
+			if ($method === $routeMethod && $this->matchRoute($routeUri, $uri)) {
 				return $this->handleRoute($handler);
 			}
+			// if ($this->matchRoute($route, $method, $uri)) {
+			// 	return $this->handleRoute($handler);
+			// }
 		}
 		return null;
 	}
-	protected function matchRoute(string $route, string $method, string $uri): bool
+	protected function matchRoute(string $routeUri, string $uri): bool
 	{
-		[$routeMethod, $routeUri] = explode(' ', $route);
-		if ($method !== $routeMethod) {
-			return false;
-		}
 		if (strpos($routeUri, '{') !== false) {
 			$pattern = preg_replace('/\/{\w+}/', '/(\w+)', $routeUri);
 			$pattern = str_replace('/', '\/', $pattern);
