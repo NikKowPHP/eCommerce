@@ -1,3 +1,5 @@
+<?php use App\Utils\Auth; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,14 +34,26 @@
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/cart', $uri) ?>
 					" href="/cart">cart</a></li>
-					<li class="nav-item"> <a class="
+
+
+
+					<?php if (!Auth::isLoggedIn()): ?>
+						<li class="nav-item"> <a class="
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/signup', $uri) ?>
 					" href="/signup">signup</a></li>
-					<li class="nav-item"> <a class="
+						<li class="nav-item"> <a class="
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/login', $uri) ?>
 					" href="/login">login</a></li>
+					<?php else: ?>
+
+						<li class="nav-item">
+							<form action="/logout" class="nav-link" method="post"><input type="submit" value="logout"></form>
+						</li>
+
+					<?php endif; ?>
+
 				</ul>
 			</nav>
 
