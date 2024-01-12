@@ -3,8 +3,7 @@
   <form action="/users/signup" method="POST" class="col-md-6">
     <div class="form-group">
       <label for="inputUsername">Username</label>
-      <input name="username" type="text" class="form-control" id="inputUsername" 
-        placeholder="Enter username">
+      <input name="username" type="text" class="form-control" id="inputUsername" placeholder="Enter username">
     </div>
     <div class="form-group">
       <label for="exampleInputEmail1">Email address</label>

@@ -15,7 +15,7 @@ class Auth
 		// TODO: Auth token
 		SessionManager::regenerateSessionId();
 		SessionManager::setSessionValue('user_id', $userId);
-		Cookie::set('user_id', (string) $userId);
+		Cookie::set('user_id', (string) $userId, Cookie::getMonthExpiration());
 	}
 	public static function logOut(int $userId): void
 	{

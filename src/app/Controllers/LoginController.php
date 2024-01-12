@@ -26,10 +26,10 @@ class LoginController extends AbstractController
 			$user->read($email, 'email');
 
 			if ($user->getId() && password_verify($inputPassword, $user->getPassword())) {
+				
 				Auth::logIn($user->getId());
 				SessionManager::setFlashMessage('success', 'You have successfully logged in');
 				Location::redirect('/');
-				// TODO:  create a cookie
 			} else {
 				SessionManager::setFlashMessage('failure', 'The provided credentials have not found, try again');
 				Location::redirect('/login');
