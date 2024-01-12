@@ -17,4 +17,8 @@ class Cookie
 	{
 		self::set($name, '', time() - 3600);
 	}
+	public static function getMonthExpiration():int
+	{
+		return time() + (30 * 24 * 60 * 60);
+	}
 }
