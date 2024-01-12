@@ -19,7 +19,7 @@ class SessionManager
 	}
 	public static function getSessionValue(string $key)
 	{
-		return $_SESSION[$key] ?? null;
+		return $_SESSION[$key] ?? Cookie::get('user_id')?? null;
 	}
 	public static function destroySession(): void
 	{
