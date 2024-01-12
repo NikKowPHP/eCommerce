@@ -4,7 +4,10 @@ declare(strict_types=1);
 require_once("../vendor/autoload.php");
 require_once("../app/routes.php");
 
+use App\Utils\SessionManager;
 use App\Router;
+
+SessionManager::startSession();
 
 // Instantiate the router
 $router = new Router($routes);
@@ -17,5 +20,3 @@ $router->handleRequest($method, $uri);
 $bodyContent = ob_get_clean();
 
 include("../app/Views/layout.php");
-
-?>
