@@ -1,2 +1,8 @@
-<?php
-echo '<h1>THIS IS PRODUCTS PAGE</h1>';
+<?php foreach($products as $product): ?>
+
+	<div class="col-md-6">
+		<h3><?= $product->getName() ?></h3>
+		<p><?= $product->getDescription() ?></p>
+	</div>
+
+	<?php endforeach;  ?>

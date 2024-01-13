@@ -9,8 +9,11 @@ class ProductController extends AbstractController
 {
 	public function index(): void
 	{
+		$product = new Product();
+		$products = $product->findAll();
+
 		$viewPath = __DIR__ . '/../Views/products.php';
-		$this->includeView($viewPath);
+		$this->includeView($viewPath, ['products'=> $products]);
 	}
 	public function show(int $id): void
 	{

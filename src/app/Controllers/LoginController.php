@@ -31,8 +31,7 @@ class LoginController extends AbstractController
 				SessionManager::setFlashMessage('success', 'You have successfully logged in');
 				Location::redirect('/');
 			} else {
-				SessionManager::setFlashMessage('failure', 'The provided credentials have not found, try again');
-				Location::redirect('/login');
+				SessionManager::setFlashMessage('failure', 'The provided credentials have not found, try again'); Location::redirect('/login');
 			}
 		}
 	}
