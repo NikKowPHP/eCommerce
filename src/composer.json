@@ -3,6 +3,7 @@
 			"psr-4": {
 					"App\\": "app/",
 					"App\\Controllers\\": "app/Controllers",
+					"App\\Controllers\\Admin\\": "app/Controllers/Admin",
 					"App\\Models\\": "app/Models",
 					"App\\Exceptions\\": "app/Exceptions",
 					"App\\Traits\\": "app/Traits",
