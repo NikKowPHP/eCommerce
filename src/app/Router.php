@@ -11,12 +11,12 @@ class Router
 	{
 		$this->routes = $routes;
 	}
-	public function handleRequest(string $method, string $uri): mixed
+	public function handleRequest(string $method, string $uri, string $namespace): mixed
 	{
 		foreach ($this->routes as $route => $handler) {
 			[$routeMethod, $routeUri] = explode(' ', $route);
 			if ($method === $routeMethod && $this->matchRoute($routeUri, $uri)) {
-				return $this->handleRoute($handler);
+				return $this->handleRoute($handler, $namespace);
 			}
 			// if ($this->matchRoute($route, $method, $uri)) {
 			// 	return $this->handleRoute($handler);
@@ -38,10 +38,10 @@ class Router
 		}
 		return $uri === $routeUri;
 	}
-	protected function handleRoute(string $handler): mixed
+	protected function handleRoute(string $handler, string $namespace): mixed
 	{
 		list($controller, $action) = explode('@', $handler);
-		$namespace = 'App\Controllers\\';
+		// $namespace = 'App\Controllers\\';
 		$controller = $namespace . $controller;
 		$controllerInstance = new $controller();
 		$param = isset($this->parametr) ? $this->parametr : null;
