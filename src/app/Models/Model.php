@@ -60,9 +60,12 @@ abstract class Model
 			$stmt = $pdo->prepare($query);
 			$stmt->execute();
 			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-
-			if ($allData) {
-				return $this->convertRows($allData);
+			$convertedData = $this->convertRows($allData);
+			if ($convertedData) {
+				return array_map(function ($item) {
+					$instance = new static();
+					return $instance->instantiate($item);
+				}, $convertedData);
 			}
 			return [];
 		} catch (\PDOException $e) {
