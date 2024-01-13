@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+use App\Helpers\NavigationHelper;
 
 require_once("../vendor/autoload.php");
 require_once("../app/routes.php");
@@ -19,4 +20,8 @@ ob_start();
 $router->handleRequest($method, $uri);
 $bodyContent = ob_get_clean();
 
-include("../app/Views/layout.php");
+if (NavigationHelper::isAdminLayout('/admin', $uri)) {
+	include("../app/Views/admin/layoutAdmin.php");
+} else {
+	include("../app/Views/layout.php");
+}
