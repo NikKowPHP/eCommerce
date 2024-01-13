@@ -11,4 +11,8 @@ class NavigationHelper
 		}
 		return '';
 	}
+	public static function isAdminLayout(string $url, string $currentUrl): bool
+	{
+		return str_contains($currentUrl, $url);
+	}
 }
