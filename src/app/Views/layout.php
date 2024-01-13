@@ -42,11 +42,17 @@
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/signup', $uri) ?>
 					" href="/signup">signup</a></li>
+
 						<li class="nav-item"> <a class="
 					nav-link
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/login', $uri) ?>
 					" href="/login">login</a></li>
+
 					<?php else: ?>
+						<li class="nav-item"> <a class="
+					nav-link
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/admin', $uri) ?>
+					" href="/admin">admin</a></li>
 
 						<li class="nav-item">
 							<form action="/logout" class="nav-link" method="post"><input type="submit" value="logout"></form>
