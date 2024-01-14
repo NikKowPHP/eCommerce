@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Controllers\Admin;
 
-use App\Controllers\AbstractAdminController;
+use App\Controllers\Admin\AbstractAdminController;
 use App\Models\Image;
 use App\Models\Product;
 
@@ -12,8 +12,7 @@ class ProductController extends AbstractAdminController
 	{
 		$product = new Product();
 		$products = $product->findAll();
-
-		$viewPath = __DIR__ . '/../Views/products.php';
+		$viewPath = __DIR__ . '/../../Views/admin/products.php';
 		$this->includeView($viewPath, ['products'=> $products]);
 	}
 	public function show(int $id): void
