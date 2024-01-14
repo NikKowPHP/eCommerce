@@ -15,4 +15,12 @@ class NavigationHelper
 	{
 		return str_contains($currentUrl, $url);
 	}
+	public static function getControllerNamespace(string $currentUri): string
+	{
+		if (str_contains($currentUri, '/admin')) {
+			return 'App\Controllers\Admin\\';
+		}
+		return 'App\Controllers\\';
+	}
+
 }
