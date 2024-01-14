@@ -18,6 +18,17 @@
 		<div class="container">
 			<nav class="navbar navbar-expand-md navbar-expand-lg ">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-around">
+
+					<li class="nav-item "><a class="
+					nav-link 
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/admin/products', $uri) ?>
+					" href="/admin/products">Products</a></li>
+
+					<li class="nav-item "><a class="
+					nav-link 
+					<?= \App\Helpers\NavigationHelper::isLinkActive('/admin/users', $uri) ?>
+					" href="/admin/users">Users</a></li>
+
 					<li class="nav-item "><a class="
 					nav-link 
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/', $uri) ?>
