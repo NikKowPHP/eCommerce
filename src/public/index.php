@@ -17,7 +17,8 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Capture the output from the controller method
 ob_start();
-$router->handleRequest($method, $uri);
+$namespace = NavigationHelper::getControllerNamespace($uri);
+$router->handleRequest($method, $uri, $namespace);
 $bodyContent = ob_get_clean();
 
 if (NavigationHelper::isAdminLayout('/admin', $uri)) {
