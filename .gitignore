@@ -6,3 +6,4 @@ src/vendor/composer/*
 src/app/.phpunit.result.cache
 src/vendor/composer/installed.json
 src/vendor/composer/installed.php
+src/public/images/*
