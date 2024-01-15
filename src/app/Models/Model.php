@@ -9,6 +9,8 @@ abstract class Model
 {
 	protected Database $database;
 
+	protected static array $hiddenProps = [];
+
 	public function __construct()
 	{
 		$this->initDatabase();
@@ -17,20 +19,41 @@ abstract class Model
 	{
 		$this->database = new Database();
 	}
-	protected function save(): bool
+
+	protected function getVisibleProps(): array
+	{
+		$visibleProps = [];
+		array_push(static::$hiddenProps, 'database', 'tableName');
+
+		$reflector = new \ReflectionClass($this);
+		$properties = $reflector->getProperties(ReflectionProperty::IS_PRIVATE);
+
+		foreach ($properties as $property) {
+			$property->setAccessible(true);
+			$fieldName = $property->getName();
+			if ($fieldName !== 'id' && !in_array($fieldName, static::$hiddenProps)) {
+				echo '<br/>';
+				var_dump($fieldName);
+				$visibleProps[$fieldName] = $property->getValue($this);
+			}
+		}
+		return $visibleProps;
+	}
+	public static function setHiddenProps(array $hiddenProps): void
+	{
+		static::$hiddenProps = $hiddenProps;
+	}
+	public static function getHiddenProps(): array
+	{
+		return static::$hiddenProps;
+	}
+
+	protected function save(): ?int
 	{
 		try {
 			$this->initDatabase();
-			$reflector = new \ReflectionClass($this);
-			$properties = $reflector->getProperties(ReflectionProperty::IS_PRIVATE);
-			$fields = [];
-			foreach ($properties as $property) {
-				$property->setAccessible(true);
-				$fieldName = $property->getName();
-				if ($fieldName !== 'id')
-					$fields[$fieldName] = $property->getValue($this);
-			}
-			unset($fields['database']);
+			$fields = $this->getVisibleProps();
+
 			$fieldNames = implode(', ', array_keys($fields));
 			$placeholders = ':' . implode(', :', array_keys($fields));
 
@@ -41,12 +64,13 @@ abstract class Model
 				$stmt->bindValue(":$key", $value);
 			}
 			$stmt->execute();
+			$lastInsertId = $pdo->lastInsertId();
 
-			return true;
+			return $lastInsertId ? (int) $lastInsertId : null;
 
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
-			return false;
+			return null;
 		}
 
 	}
