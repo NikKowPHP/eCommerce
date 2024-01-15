@@ -2,14 +2,20 @@
 declare(strict_types=1);
 namespace App\Controllers\Admin;
 
-require_once(__DIR__.'/../../../config/constants.php');
 use App\Controllers\Admin\AbstractAdminController;
 use App\Models\Image;
-use App\Models\File;
 use App\Models\Product;
+use App\Services\ProductService;
 
 class ProductController extends AbstractAdminController
 {
+	private ProductService $productService;
+
+	public function __construct()
+	{
+		$this->productService = new ProductService();
+	}
+
 	public function index(): void
 	{
 		$product = new Product();
@@ -33,24 +39,16 @@ class ProductController extends AbstractAdminController
 		$this->includeView($viewPath);
 
 	}
-	public function store(): void
+	public function store(): ?int
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$name = $_POST['name'];
 			$description = $_POST['description'];
 			$price = (float) $_POST['price'];
-			$product = new Product($name, $description, $price);
-			if ($productId = $product->write()) {
-				$product->setId($productId);
-				// handle file upload
-				$uploadedFileName = File::upload('file', IMAGE_UPLOAD_PATH);
-				if ($uploadedFileName !== null) {
-					$image = new Image($productId, $uploadedFileName);
-					$image->write();
-				} else {
-				}
-			}
+
+			return $this->productService->createProduct($name, $description, $price);
 		}
+
 	}
 	public function edit(): void
 	{
