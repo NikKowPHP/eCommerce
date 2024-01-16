@@ -7,6 +7,7 @@ $routes = [
 	'GET /signup' => 'RegisterController@index',
 	'GET /login' => 'LoginController@index',
 	'GET /admin/products' => 'ProductController@index',
+	'GET /admin/products/{id}' => 'ProductController@show',
 	'GET /admin/users' => 'UserController@index',
 	'GET /admin/carts' => 'CartController@index',
 	// ADMIN CRUD
