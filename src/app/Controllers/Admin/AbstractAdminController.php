@@ -10,7 +10,7 @@ abstract class AbstractAdminController
 	abstract public function index(): void;
 	abstract public function show(int $id): void;
 	abstract public function create(): void;
-	abstract public function store(): void;
+	abstract public function store(): ?int;
 	abstract public function edit(): void;
 	abstract public function update(): void;
 	abstract public function destroy(): void;

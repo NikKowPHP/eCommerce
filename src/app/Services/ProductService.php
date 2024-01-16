@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Services;
 
-require_once(__DIR__ . '/../../../config/constants.php');
+require_once(__DIR__ . '/../../config/constants.php');
 use App\Models\Image;
 use App\Models\File;
 use App\Models\Product;

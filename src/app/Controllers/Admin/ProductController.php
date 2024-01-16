@@ -30,7 +30,7 @@ class ProductController extends AbstractAdminController
 		$image = new Image();
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
-		$viewPath = __DIR__ . '/../Views/product.php';
+		$viewPath = __DIR__ . '/../../Views/product.php';
 		$this->includeView($viewPath, ['product' => $product]);
 	}
 	public function create(): void
