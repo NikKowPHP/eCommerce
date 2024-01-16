@@ -39,9 +39,9 @@ abstract class Model
 		}
 		return $visibleProps;
 	}
-	public static function setHiddenProps(array $hiddenProps): void
+	public static function setHiddenProps(string ... $values): void
 	{
-		static::$hiddenProps = $hiddenProps;
+		static::$hiddenProps = array_merge(static::$hiddenProps, $values);
 	}
 	public static function getHiddenProps(): array
 	{
@@ -71,6 +71,35 @@ abstract class Model
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
 			return null;
+		}
+
+	}
+	public function update(): bool
+	{
+		try {
+			$this->initDatabase();
+			$fields = $this->getVisibleProps();
+
+			$setStatements = [];
+			foreach ($fields as $key => $value) {
+				$setStatements[] = "$key = :$key";
+			}
+			$setClause = implode(', ', $setStatements);
+
+			$pdo = $this->database->getConnection();
+			$query = "UPDATE " . $this->getTableName() . " SET $setClause WHERE id = :id";
+			$stmt = $pdo->prepare($query);
+
+			foreach ($fields as $key => $value) {
+				$stmt->bindValue(":$key", $value);
+			}
+			$stmt->bindValue(':id', $this->getId());
+
+			return $stmt->execute();
+
+		} catch (\PDOException $e) {
+			echo "connection failed: " . $e->getMessage();
+			return false;
 		}
 
 	}
@@ -179,8 +208,8 @@ abstract class Model
 		}, $rows);
 	}
 	abstract protected function getTableName(): string;
-	
-	public function getDatabase():Database
+
+	public function getDatabase(): Database
 	{
 		return $this->database;
 	}
