@@ -13,14 +13,25 @@
 		<tbody>
 			<?php foreach ($products as $product): ?>
 				<tr>
-					<th scope="row"><?= $product->getId() ?></th>
-					<td><?= $product->getName() ?></td>
-					<td><?= $product->getDescription() ?></td>
+					<th scope="row">
+						<?= $product->getId() ?>
+					</th>
 					<td>
-						<a class="btn btn-danger w-75 m-0" href="/admin/products/remove/<?= $product_id ?>">Remove</a>
+						<?= $product->getName() ?>
 					</td>
 					<td>
-						<a class="btn btn-secondary" href="/admin/products/edit?id=<?= $product_id ?>">Edit</a>
+						<?= $product->getDescription() ?>
+					</td>
+					<td>
+						<a class="btn btn-danger w-75 m-0" href="/admin/product/remove/<?= $product->getId() ?>">Remove</a>
+					</td>
+					<td>
+						<a class="btn btn-secondary" href="/admin/product/edit/<?= $product->getId() ?>">Edit</a>
+					</td>
+					<td>
+						<a class="btn btn-primary" href="/admin/products/<?= $product->getId() ?>">
+						Show
+						</a>
 					</td>
 				</tr>
 
