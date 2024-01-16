@@ -179,4 +179,9 @@ abstract class Model
 		}, $rows);
 	}
 	abstract protected function getTableName(): string;
+	
+	public function getDatabase():Database
+	{
+		return $this->database;
+	}
 }
