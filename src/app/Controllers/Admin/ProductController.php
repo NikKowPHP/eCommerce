@@ -91,8 +91,24 @@ class ProductController extends AbstractAdminController
 		Location::redirect('/');
 		return false;
 	}
-	public function destroy(): void
+	public function destroy(int $id): ?bool
 	{
-
+		// Checks whether hidden input with value _method exists
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtoupper($_POST['_method']) === 'DELETE') {
+			$product = (new Product())->read($id);
+			if ($product->getId()) {
+				
+				if ($product->remove()) {
+					SessionManager::setFlashMessage('success', "Product {$product->getName()} has been deleted");
+					Location::redirect('/admin/products');
+					return true;
+				}
+				SessionManager::setFlashMessage('failure', "Product not found or could not be deleted");
+				Location::redirect('/admin/products');
+				return false;
+			}
+		}
+		Location::redirect('/');
+		return null;
 	}
 }
