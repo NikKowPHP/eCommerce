@@ -1,5 +1,8 @@
+<?php use App\Utils\SessionManager ?>
+<?php echo SessionManager::getFlashMessage('success') ?>
+<?php echo SessionManager::getFlashMessage('failure') ?>
 <div class="container col-md-12">
-	<div><a class="btn btn-primary m-4" href="/admin/products/create">Add a new product</a></div>
+	<div><a class="btn btn-primary m-4" href="/admin/product/create">Add a new product</a></div>
 
 	<table class="table">
 		<thead class="thead-dark">
@@ -23,14 +26,18 @@
 						<?= $product->getDescription() ?>
 					</td>
 					<td>
-						<a class="btn btn-danger w-75 m-0" href="/admin/product/remove/<?= $product->getId() ?>">Remove</a>
+						<form action="/admin/product/<?= $product->getId() ?>" method="POST">
+							<input type="hidden" name="_method" value="DELETE">
+							<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Remove</button>
+						</form>
+
 					</td>
 					<td>
 						<a class="btn btn-secondary" href="/admin/product/edit/<?= $product->getId() ?>">Edit</a>
 					</td>
 					<td>
-						<a class="btn btn-primary" href="/admin/products/<?= $product->getId() ?>">
-						Show
+						<a class="btn btn-primary" href="/admin/product/<?= $product->getId() ?>">
+							Show
 						</a>
 					</td>
 				</tr>
