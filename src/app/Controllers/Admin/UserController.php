@@ -22,70 +22,77 @@ class UserController extends AbstractAdminController
 	public function index(): void
 	{
 		$users = (new User())->findAll();
-		$viewPath = __DIR__ . '/../../Views/admin/users.php';
+		$viewPath = __DIR__ . '/../../Views/admin/user/users.php';
 		$this->includeView($viewPath, ['users' => $users]);
 	}
 	public function show(int $id): void
 	{
-		$product = new Product();
-		$product->read($id);
-		$image = new Image();
-		$images = $image->findAllBy('productId', $id);
-		$product->setImages($images);
-		$viewPath = __DIR__ . '/../../Views/product.php';
-		$this->includeView($viewPath, ['product' => $product]);
+		$user = (new User())->read($id);
+		$viewPath = __DIR__ . '/../../Views/admin/user/user.php';
+		$this->includeView($viewPath, ['user' => $user]);
 	}
 	public function create(): void
 	{
-		$viewPath = __DIR__ . '/../../Views/admin/newProductForm.php';
+		$viewPath = __DIR__ . '/../../Views/admin/user/newUserForm.php';
 		$this->includeView($viewPath);
 
 	}
 	public function store(): ?int
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$name = $_POST['name'];
-			$description = $_POST['description'];
-			$price = (float) $_POST['price'];
+			$username = trim($_POST['username']);
+			$email = trim($_POST['email']);
+			$password = $_POST['password'];
 
-			return $this->productService->createProduct($name, $description, $price);
+			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+			$user = new User($username, $email, $hashedPassword);
+			if ($userId = $user->store()) {
+				SessionManager::setFlashMessage('success', "User {$user->getUsername()} has been stored");
+				Location::redirect('/admin/users');
+				return $userId;
+			}
+			SessionManager::setFlashMessage('failure', "User {$user->getUsername()} has not been updated, try again");
 		}
-
 	}
 	// Renders edit view
 	public function edit($id): void
 	{
-		$viewPath = __DIR__ . '/../../Views/admin/product/editProductView.php';
-		$product = new Product();
-		$product->read($id);
-		$image = new Image();
-		$images = $image->findAllBy('productId', $id);
-		$product->setImages($images);
-		$this->includeView($viewPath, ['product' => $product]);
+		$viewPath = __DIR__ . '/../../Views/admin/user/editUserForm.php';
+		$user = (new User())->read($id);
+		$this->includeView($viewPath, ['user' => $user]);
 	}
 	// Updates the product
 	public function update(): bool
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$productId = (int) $_POST['id'];
+			$userId = (int) $_POST['id'];
+			var_dump($userId);
 
-			if (!(new Product())->read($productId)) {
+			if (!(new User())->read($userId)) {
 				return false;
 			}
-			$name = $_POST['name'];
-			$description = $_POST['description'];
-			$price = (float) $_POST['price'];
-			$product = new Product($name, $description, $price);
-			$product->setId($productId);
-			$product->setHiddenProps('images');
+			$username = trim($_POST['username']);
+			$email = trim($_POST['email']);
+			$password = $_POST['password'];
 
-			if ($this->productService->updateProduct($product)) {
-				SessionManager::setFlashMessage('success', "Product {$product->getName()} has been updated");
-				Location::redirect('/admin/product/edit/' . $product->getId());
+			$user = new User($username, $email);
+			$user->setHiddenProps('registrationDate');
+			if (empty($password) && $password === '') {
+				$user->setHiddenProps('password');
+			} else {
+				$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+				$user->setPassword($hashedPassword);
+			}
+
+			$user->setId($userId);
+
+			if ($user->update()) {
+				SessionManager::setFlashMessage('success', "User {$user->getUsername()} has been updated");
+				Location::redirect('/admin/user/edit/' . $user->getId());
 				return true;
 			}
-			SessionManager::setFlashMessage('failure', "Product {$product->getName()} has not been updated, try again");
-			Location::redirect('/admin/product/edit/' . $product->getId());
+			SessionManager::setFlashMessage('failure', "User {$user->getUsername()} has not been updated, try again");
+			Location::redirect('/admin/user/edit/' . $user->getId());
 			return false;
 		}
 		Location::redirect('/');
@@ -95,16 +102,15 @@ class UserController extends AbstractAdminController
 	{
 		// Checks whether hidden input with value _method exists
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtoupper($_POST['_method']) === 'DELETE') {
-			$product = (new Product())->read($id);
-			if ($product->getId()) {
-				
-				if ($product->remove()) {
-					SessionManager::setFlashMessage('success', "Product {$product->getName()} has been deleted");
-					Location::redirect('/admin/products');
+			$user = (new User())->read($id);
+			if ($user->getId()) {
+				if ($user->deleteUser()) {
+					SessionManager::setFlashMessage('success', "User {$user->getUsername()} has been deleted");
+					Location::redirect('/admin/users');
 					return true;
 				}
-				SessionManager::setFlashMessage('failure', "Product not found or could not be deleted");
-				Location::redirect('/admin/products');
+				SessionManager::setFlashMessage('failure', "User not found or could not be deleted");
+				Location::redirect('/admin/users');
 				return false;
 			}
 		}
