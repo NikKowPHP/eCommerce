@@ -13,5 +13,5 @@ abstract class AbstractAdminController
 	abstract public function store(): ?int;
 	abstract public function edit(int $id): void;
 	abstract public function update(): bool;
-	abstract public function destroy(): void;
+	abstract public function destroy(int $id): ?bool;
 }
