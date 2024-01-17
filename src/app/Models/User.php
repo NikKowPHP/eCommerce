@@ -30,8 +30,7 @@ class User extends Model
     }
 
     public function setId(int $id): void
-    {
-        $this->id = $id;
+    { $this->id = $id;
     }
 
     // Getter and Setter for 'username'
@@ -83,6 +82,16 @@ class User extends Model
 	{
 		return 'users';
 	}
+    public function store():?int
+    {
+		$this->registrationDate = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+    public function deleteUser():?bool
+    {
+        return $this->destroy();
+    }
+
 	public function register(): bool
 	{
 		
