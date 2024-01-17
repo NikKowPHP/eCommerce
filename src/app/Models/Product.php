@@ -70,7 +70,7 @@ class Product extends Model
 
 	public function write(): ?int
 	{
-		$this->setHiddenProps(['images']);
+		$this->setHiddenProps('images');
 		return $this->save();
 	}
 
@@ -78,6 +78,10 @@ class Product extends Model
 	public function create(array $data): void
 	{
 
+	}
+	public function remove(): ?bool
+	{
+		return $this->destroy();
 	}
 	protected function getTableName(): string
 	{
