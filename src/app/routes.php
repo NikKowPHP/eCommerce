@@ -19,12 +19,12 @@ $routes = [
 	'POST /admin/product/update' => 'ProductController@update',
 
 	'GET /admin/users' => 'UserController@index',
-	'POST /admin/users' => 'UserController@destroy',
-	'GET /admin/user/{id}' => 'UserController@show',
+	'POST /admin/user/update' => 'UserController@update',
 	'GET /admin/user/create' => 'UserController@create',
-	'POST /admin/user/create' => 'UserController@store',
+	'GET /admin/user/{id}' => 'UserController@show',
+	'POST /admin/user/{id}' => 'UserController@destroy',
+	'POST /admin/user/store' => 'UserController@store',
 	'GET /admin/user/edit/{id}' => 'UserController@edit',
-	'POST /admin/user/edit/{id}' => 'UserController@update',
 
 	'POST /admin/carts' => 'CartController@index',
 	'GET /admin/carts' => 'CartController@index',
