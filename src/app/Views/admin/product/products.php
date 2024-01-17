@@ -1,6 +1,3 @@
-<?php use App\Utils\SessionManager ?>
-<?php echo SessionManager::getFlashMessage('success') ?>
-<?php echo SessionManager::getFlashMessage('failure') ?>
 <div class="container col-md-12">
 	<div><a class="btn btn-primary m-4" href="/admin/product/create">Add a new product</a></div>
 
