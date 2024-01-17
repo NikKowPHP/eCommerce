@@ -172,7 +172,7 @@ abstract class Model
 			return null;
 		}
 	}
-	protected function delete(): ?bool
+	protected function destroy(): ?bool
 	{
 		try {
 			$pdo = $this->database->getConnection();
