@@ -39,7 +39,7 @@ abstract class Model
 		}
 		return $visibleProps;
 	}
-	public static function setHiddenProps(string ... $values): void
+	public static function setHiddenProps(string ...$values): void
 	{
 		static::$hiddenProps = array_merge(static::$hiddenProps, $values);
 	}
@@ -171,6 +171,23 @@ abstract class Model
 			echo "Connection failed: " . $e->getMessage();
 			return null;
 		}
+	}
+	protected function delete(): ?bool
+	{
+		try {
+			$pdo = $this->database->getConnection();
+			$query = "DELETE FROM " . $this->getTableName() . " WHERE id=:id";
+			$id = static::getId();
+
+			$stmt = $pdo->prepare($query);
+			$stmt->bindParam(':id', $id);
+			return $stmt->execute();
+
+		} catch (\PDOException $e) {
+			echo "Connection failed: " . $e->getMessage();
+			return null;
+		}
+
 	}
 	protected function instantiate(array $data): static
 	{
