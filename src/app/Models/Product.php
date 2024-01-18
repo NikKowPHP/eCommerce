@@ -11,6 +11,7 @@ class Product extends Model
 	private string $name;
 	private string $description;
 	private float $price;
+	private ?string $thumbnail;
 	private array $images;
 	private string $tableName;
 
@@ -86,6 +87,14 @@ class Product extends Model
 	protected function getTableName(): string
 	{
 		return $this->tableName;
+	}
+	public function getThumbnail():?string
+	{
+		return $this->thumbnail;
+	}
+	public function setThumbnail(?string $thumbnail):void
+	{
+		$this->thumbnail = $thumbnail;
 	}
 
 }
