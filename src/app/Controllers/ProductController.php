@@ -13,7 +13,7 @@ class ProductController extends AbstractController
 		$products = $product->findAll();
 
 		$viewPath = __DIR__ . '/../Views/products.php';
-		$this->includeView($viewPath, ['products'=> $products]);
+		$this->includeView($viewPath, ['products' => $products]);
 	}
 	public function show(int $id): void
 	{

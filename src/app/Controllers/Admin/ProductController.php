@@ -22,7 +22,7 @@ class ProductController extends AbstractAdminController
 	{
 		$product = new Product();
 		$products = $product->findAll();
-		$viewPath = __DIR__ . '/../../Views/admin/products.php';
+		$viewPath = __DIR__ . '/../../Views/admin/product/products.php';
 		$this->includeView($viewPath, ['products' => $products]);
 	}
 	public function show(int $id): void
