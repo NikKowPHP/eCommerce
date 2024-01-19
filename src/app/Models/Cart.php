@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Model;
 use App\Models\CartItem;
+use App\Utils\Auth;
 
 
 class Cart extends Model
@@ -12,6 +13,15 @@ class Cart extends Model
 	private int $userId;
 	private string $createdAt;
 	private array $items;
+
+
+	public function __construct(int $userId = 0, array $items = [])
+	{
+		$this->userId = $userId;
+		$this->items = $items;
+
+		parent::__construct();
+	}
 	public function getTableName(): string
 	{
 		return 'carts';
@@ -22,7 +32,7 @@ class Cart extends Model
 	}
 	public function setUserId(int $userId): void
 	{
-		$this->userId= $userId;
+		$this->userId = $userId;
 	}
 	public function setCreatedAt(string $createdAt): void
 	{
@@ -42,10 +52,32 @@ class Cart extends Model
 		$this->setItems($cartItems);
 		return $cartItems;
 	}
+	public function addItem(Product $product, int $quantity = 1): ?int
+	{
+		$cartItem = new CartItem($this->id, $product->getId(), $quantity);
+		echo '<br/>';
+		echo '<pre>';
+		print_r($cartItem);
+		echo '</pre>';
+		return $cartItem->storeItem();
+	}
+	public function store():?int
+	{
+
+		$this->setHiddenProps('createdAt', 'items');
+		return $this->save();
+	}
+	public function find(): ?self
+	{
+		$userId = Auth::getUserId();
+		$this->setHiddenProps('id');
+		return $this->read($userId, 'userId');
+
+	}
 	public function setItems(array $items): void
 	{
 		$this->items = $items;
-	} 
+	}
 	public function getId(): int
 	{
 		return $this->id;
