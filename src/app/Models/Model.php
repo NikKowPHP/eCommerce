@@ -32,8 +32,6 @@ abstract class Model
 			$property->setAccessible(true);
 			$fieldName = $property->getName();
 			if ($fieldName !== 'id' && !in_array($fieldName, static::$hiddenProps)) {
-				echo '<br/>';
-				var_dump($fieldName);
 				$visibleProps[$fieldName] = $property->getValue($this);
 			}
 		}
@@ -164,9 +162,10 @@ abstract class Model
 			$foundData = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
 			if ($foundData) {
 				$foundData = $this->convertRow($foundData);
+				$this->instantiate($foundData);
+				return $this;
 			}
-			$this->instantiate($foundData);
-			return $this;
+			return null;
 		} catch (\PDOException $e) {
 			echo "Connection failed: " . $e->getMessage();
 			return null;
@@ -199,7 +198,7 @@ abstract class Model
 		}
 		return $this;
 	}
-	protected function castProp(string $value): mixed
+	protected function castProp(?string $value): mixed
 	{
 		if (is_numeric($value)) {
 			if ((int) $value == $value) {
