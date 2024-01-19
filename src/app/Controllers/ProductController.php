@@ -2,8 +2,11 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Models\CartItem;
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Cart;
+use App\Utils\Auth;
 
 class ProductController extends AbstractController
 {
@@ -11,9 +14,11 @@ class ProductController extends AbstractController
 	{
 		$product = new Product();
 		$products = $product->findAll();
+		$userCart = (new Cart())->read(Auth::getUserId(), 'userId');
+		$cartItems = (new CartItem)->findAllBy('cartId', $userCart->getId());
 
 		$viewPath = __DIR__ . '/../Views/products.php';
-		$this->includeView($viewPath, ['products' => $products]);
+		$this->includeView($viewPath, ['products' => $products, 'userItems' => $cartItems]);
 	}
 	public function show(int $id): void
 	{
