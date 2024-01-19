@@ -14,58 +14,70 @@ class CartItem extends Model
 	private int $quantity;
 	private Product $product;
 
+	public function __construct(int $cartId = 0, int $productId = 0, int $quantity = 1)
+	{
+		$this->cartId = $cartId;
+		$this->productId = $productId;
+		$this->quantity = $quantity;
+	}
 	public function getTableName(): string
 	{
 		return 'cart_items';
 	}
-	 public function getId(): int
-	 {
-			 return $this->id;
-	 }
+	public function getId(): int
+	{
+		return $this->id;
+	}
 
-	 public function getCartId(): int
-	 {
-			 return $this->cartId;
-	 }
+	public function getCartId(): int
+	{
+		return $this->cartId;
+	}
 
-	 public function getProductId(): int
-	 {
-			 return $this->productId;
-	 }
+	public function getProductId(): int
+	{
+		return $this->productId;
+	}
 
-	 public function getQuantity(): int
-	 {
-			 return $this->quantity;
-	 }
+	public function getQuantity(): int
+	{
+		return $this->quantity;
+	}
 	public function getProduct(): Product
 	{
 		return $this->product;
 	}
-	public function findProduct(): void
+	public function findProduct(int $productId): self
 	{
-		$product = new Product();
-		$product->read($this->productId);
+		$product = (new Product())->read($productId);
 		$this->product = $product;
+		return $this;
 	}
 
-	 // Setters
-	 public function setId(int $id): void
-	 {
-			 $this->id = $id;
-	 }
+	// Setters
+	public function setId(int $id): void
+	{
+		$this->id = $id;
+	}
 
-	 public function setCartId(int $cartId): void
-	 {
-			 $this->cartId = $cartId;
-	 }
+	public function setCartId(int $cartId): void
+	{
+		$this->cartId = $cartId;
+	}
 
-	 public function setProductId(int $productId): void
-	 {
-			 $this->productId = $productId;
-	 }
+	public function setProductId(int $productId): void
+	{
+		$this->productId = $productId;
+	}
 
-	 public function setQuantity(int $quantity): void
-	 {
-			 $this->quantity = $quantity;
-	 }
+	public function setQuantity(int $quantity): void
+	{
+		$this->quantity = $quantity;
+	}
+	public function storeItem():?int
+	{
+		$this->setHiddenProps('product', 'id');
+		return $this->save();
+	}
+
 }
