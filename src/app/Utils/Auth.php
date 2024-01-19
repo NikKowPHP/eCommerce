@@ -10,6 +10,10 @@ class Auth
 	{
 		return SessionManager::getSessionValue('user_id') !== null;
 	}
+	public static function getUserId(): ?int
+	{
+		return SessionManager::getSessionValue('user_id') ?? null;
+	}
 	public static function logIn(int $userId): void
 	{
 		// TODO: Auth token
