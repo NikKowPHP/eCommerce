@@ -9,6 +9,7 @@ $routes = [
 	'GET /products' => 'ProductController@index',
 	'GET /products/{id}' => 'ProductController@show',
 	'GET /cart' => 'CartController@index',
+	'POST /products' => 'CartController@addProduct',
 
 	'GET /admin/products' => 'ProductController@index',
 	'GET /admin/product/{id}' => 'ProductController@show',
