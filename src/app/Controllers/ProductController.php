@@ -18,8 +18,40 @@ class ProductController extends AbstractController
 		$userCartItems = $this->getUserCartItems($userCart);
 		$this->updateUserCartItemsQuantity($userCartItems);
 
+		$isProductInUserCart = function (int $productId) use ($userCartItems): bool {
+			return $this->isProductInCart($productId, $userCartItems);
+		};
+
+		$getUserItem = function (int $productId) use ($userCartItems): ?CartItem{
+			return $this->getUserItem($productId, $userCartItems);
+		};
+
 		$viewPath = __DIR__ . '/../Views/products.php';
-		$this->includeView($viewPath, ['products' => $products, 'userItems' => $userCartItems]);
+		$this->includeView($viewPath, ['products' => $products, 'userItems' => $userCartItems, 'isProductInUserCart' => $isProductInUserCart, 'getUserItem' => $getUserItem]);
+	}
+
+	private function getUserItem(int $productId, ?array $userCartItems): ?CartItem
+	{
+		if ($userCartItems !== null) {
+			foreach ($userCartItems as $userItem) {
+				if ($userItem->getProductId() === $productId) {
+					return $userItem;
+				}
+			}
+		}
+		return null;
+	}
+
+	private function isProductInCart(int $productId, ?array $userCartItems): bool
+	{
+		if ($userCartItems !== null) {
+			foreach ($userCartItems as $userItem) {
+				if ($userItem->getProductId() === $productId) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private function getUserCartItems(Cart $userCart): ?array
