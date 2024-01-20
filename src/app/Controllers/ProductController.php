@@ -15,10 +15,24 @@ class ProductController extends AbstractController
 		$product = new Product();
 		$products = $product->findAll();
 		$userCart = (new Cart())->read(Auth::getUserId(), 'userId');
-		$cartItems = (new CartItem)->findAllBy('cartId', $userCart->getId());
+		$userCartItems = $this->getUserCartItems($userCart);
+		$this->updateUserCartItemsQuantity($userCartItems);
 
 		$viewPath = __DIR__ . '/../Views/products.php';
-		$this->includeView($viewPath, ['products' => $products, 'userItems' => $cartItems]);
+		$this->includeView($viewPath, ['products' => $products, 'userItems' => $userCartItems]);
+	}
+
+	private function getUserCartItems(Cart $userCart): ?array
+	{
+		return (new CartItem)->findAllBy('cartId', $userCart->getId()) ?? null;
+	}
+	private function updateUserCartItemsQuantity(?array $userCartItems): void
+	{
+		if ($userCartItems !== null) {
+			foreach ($userCartItems as $cartItem) {
+				$cartItem->updateQuantity();
+			}
+		}
 	}
 	public function show(int $id): void
 	{
