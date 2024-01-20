@@ -88,9 +88,14 @@ class Product extends Model
 	{
 		return $this->tableName;
 	}
-	public function getThumbnail():?string
+	public function getThumbnail():string
 	{
-		return $this->thumbnail;
+		$thumbnail = $this->thumbnail;
+		$pathToPublicImages = '/images/';
+		if($thumbnail) {
+			return $pathToPublicImages. $thumbnail;
+		}
+		return 'https://placehold.co/600x400?text=No+Image';
 	}
 	public function setThumbnail(?string $thumbnail):void
 	{
