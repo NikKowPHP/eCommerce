@@ -79,7 +79,12 @@ class CartItem extends Model
 		$this->setHiddenProps('product', 'id');
 		return $this->save();
 	}
-	public function count(): ?int
+	public function updateQuantity(): void
+	{
+		$quantity = $this->count();
+		$this->setQuantity($quantity);
+	}
+	private function count(): ?int
 	{
 		return $this->getCount('quantity', 'productId', $this->productId);
 	}
