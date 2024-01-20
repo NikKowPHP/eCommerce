@@ -229,4 +229,25 @@ abstract class Model
 	{
 		return $this->database;
 	}
+	protected function getCount(string $column = 'quantity', string $where = '', string|int $value = ''): ?int
+	{
+		try {
+			$this->initDatabase();
+			$pdo = $this->database->getConnection();
+			$query = "SELECT COUNT($column) as count FROM " . $this->getTableName();
+			if ($where && $value) {
+				$query .= " WHERE $where=:value";
+				$stmt = $pdo->prepare($query);
+				$stmt->bindParam(':value', $value);
+			} else {
+				$stmt = $pdo->prepare($query);
+			}
+			$stmt->execute();
+			$allData = $stmt->fetch(\PDO::FETCH_ASSOC);
+			return (int)$allData['count'] ?? null;
+
+		} catch (\PDOException $e) {
+			echo "connection failed: " . $e->getMessage();
+		}
+	}
 }
