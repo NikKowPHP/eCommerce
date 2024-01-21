@@ -1,5 +1,5 @@
 <div class="container">
-	<div class="d-flex justify-content-around ">
+	<div class="flex justify-around ">
 
 		<?php foreach ($products as $product): ?>
 			<?php
@@ -13,9 +13,11 @@
 			}
 			?>
 
-			<div class="card col-md-6 mb-3 mx-4">
-				<img class="card-img-top" src="<?= $product->getThumbnail() ?>" alt="product image">
-				<div class="card-body pb-4 px-4 ">
+			<div class=" w-full relative border rounded-md mb-3 mx-4 hover:shadow-sm">
+				<a href="/product/<?= $product->getId() ?>">
+					<img class="w-full mb-3" src="<?= $product->getThumbnail() ?>" alt="product image">
+				</a>
+				<div class="card-body  pb-14 px-4 ">
 					<h5 class="card-title">
 						<?= $product->getName() ?>
 					</h5>
@@ -24,14 +26,15 @@
 					</p>
 					<p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
 				</div>
-				<div class="card-footer pb-4">
+				<div class="card-footer absolute bottom-0 lelf-0 pb-4">
 					<?php if ($isProductInCart): ?>
 						<form action="/products/remove" method="POST">
 							<input type="hidden" name="productId" value=<?= $product->getId() ?>>
 
 							<div class="form__footer-control d-flex justify-content-center">
-								<input class="w-25 form-control m-2" type="number" name="quantity" value="<?= $userCartItemQuantity ?>">
-								<button class="btn btn-danger" type="submit">Remove from cart</button>
+								<input class="w-[30px] m-2 border rounded-md" type="number" name="quantity"
+									value="<?= $userCartItemQuantity ?>">
+								<button class="p-2 bg-red-500 text-white" type="submit">Remove from cart</button>
 							</div>
 						</form>
 
@@ -40,9 +43,9 @@
 							<input type="hidden" name="productId" value=<?= $product->getId() ?>>
 
 							<div class="form__footer-control d-flex justify-content-center">
-								<input class="w-25 form-control m-2" type="number" name="quantity"
+								<input class="border rounded-md w-[40px] m-2" type="number" name="quantity"
 									value="<?= $userCartItemQuantity ?? 1 ?>">
-								<button class="btn btn-primary" type="submit">Add to cart</button>
+								<button class="p-2 bg-blue-500 text-white" type="submit">Add to cart</button>
 							</div>
 						</form>
 					<?php endif; ?>
