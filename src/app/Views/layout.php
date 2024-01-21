@@ -8,17 +8,28 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bike Shop</title>
 
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						clifford: '#da373d',
+					}
+				}
+			}
+		}
+	</script>
 
 </head>
 
 <body>
-	<header class="bg-body-tertiary">
-		<div class="container">
-			<nav class="navbar navbar-expand-md navbar-expand-lg ">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-around">
-					<li class="nav-item "><a class="
+	<header class="bg-gray-100">
+		<div class="mx-auto">
+			<nav class="flex justify-around ">
+				<ul class="flex items-center space-x-4">
+					<li class="nav-item p-4"><a class="
 					nav-link 
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/', $uri) ?>
 					" href="/">home</a></li>
@@ -35,6 +46,10 @@
 					<?= \App\Helpers\NavigationHelper::isLinkActive('/cart', $uri) ?>
 					" href="/cart">cart</a></li>
 
+				</ul>
+
+
+				<ul class="flex justify-around items-center space-x-4">
 
 
 					<?php if (!Auth::isLoggedIn()): ?>
@@ -49,15 +64,16 @@
 					" href="/login">login</a></li>
 
 					<?php else: ?>
-						<li class="nav-item"> <a class="
-					nav-link
-					<?= \App\Helpers\NavigationHelper::isLinkActive('/admin', $uri) ?>
-					" href="/admin">admin</a></li>
+
+
+
+
+						<li class="nav-item"> <a class="nav-link <?= \App\Helpers\NavigationHelper::isLinkActive('/admin', $uri) ?>
+									" href="/admin">admin</a></li>
 
 						<li class="nav-item">
 							<form action="/logout" class="nav-link" method="post"><input type="submit" value="logout"></form>
 						</li>
-
 					<?php endif; ?>
 
 				</ul>
@@ -66,14 +82,11 @@
 		</div>
 	</header>
 
-	<main>
+	<main class="container mx-auto my-8">
 		<?= $bodyContent ?>
 	</main>
 
 
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-	integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 </html>
