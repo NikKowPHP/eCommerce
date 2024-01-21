@@ -45,7 +45,7 @@ class Cart extends Model
 
 		// Instantiate product inside cartItem
 		$cartItems = array_map(function ($cartItem) {
-			$cartItem->findProduct();
+			$cartItem->findProduct($cartItem->getProductId());
 			return $cartItem;
 		}, $cartItems);
 
@@ -95,5 +95,20 @@ class Cart extends Model
 	public function getItems(): array
 	{
 		return $this->items;
+	}
+	public function getCheckoutPrice():?float
+	{
+		return $this->calculateCart();
+
+	}
+	private function calculateCart():?float
+	{
+		$cartItems = $this->getItems();
+		$price = 0;
+		foreach($cartItems as $cartItem) {
+			$itemPrice = $cartItem->getProduct()->getPrice();
+			$price += $itemPrice;
+		}
+		return $price;
 	}
 }
