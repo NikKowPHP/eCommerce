@@ -38,8 +38,7 @@ class ProductController extends AbstractController
 			foreach ($userCartItems as $userItem) {
 				if ($userItem->getProductId() === $productId) {
 					return true;
-				}
-			}
+				} }
 		}
 		return false;
 	}
@@ -59,7 +58,9 @@ class ProductController extends AbstractController
 		$image = new Image();
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
-		$viewPath = __DIR__ . '/../Views/product.php';
-		$this->includeView($viewPath, ['product' => $product]);
+		$cart = (new Cart())->read(Auth::getUserId(), 'userId');
+		$cartItem = $cart->findItem($product);
+		$viewPath = __DIR__ . '/../Views/public/product.php';
+		$this->includeView($viewPath, ['cartItem' => $cartItem, 'product'=>$product]);
 	}
 }
