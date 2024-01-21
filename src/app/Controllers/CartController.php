@@ -16,11 +16,11 @@ class CartController extends AbstractController
 	use CartItemOperationsTrait;
 	public function index(): void
 	{
-		$cart = new Cart();
-		$cart->read(Auth::getUserId(), 'userId');
+		$cart = (new Cart())->read(Auth::getUserId(), 'userId');
 		$cart->findItems();
 
 		$viewPath = __DIR__ . '/../Views/cart.php';
+
 		$this->includeView($viewPath, ['cart' => $cart]);
 	}
 	public function show(int $id): void
