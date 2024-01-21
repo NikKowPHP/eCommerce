@@ -54,14 +54,20 @@ class Cart extends Model
 	}
 	public function addItem(Product $product, int $quantity = 1): ?int
 	{
+		$conditions = [
+			['where' => 'cartId', 'value' => $this->id],
+			['where' => 'productId', 'value' => $product->getId()]
+		];
+		$foundItem = (new CartItem())->findWithConditions($conditions);
+		if ($foundItem) {
+			$foundItem->setHiddenProps('product');
+			$foundItem->setQuantity($quantity);
+			return $foundItem->update();
+		}
 		$cartItem = new CartItem($this->id, $product->getId(), $quantity);
-		echo '<br/>';
-		echo '<pre>';
-		print_r($cartItem);
-		echo '</pre>';
 		return $cartItem->storeItem();
 	}
-	public function store():?int
+	public function store(): ?int
 	{
 
 		$this->setHiddenProps('createdAt', 'items');
