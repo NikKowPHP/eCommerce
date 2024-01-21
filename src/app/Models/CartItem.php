@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Model;
 use App\Models\Product;
+use App\Utils\Auth;
 
 
 class CartItem extends Model
@@ -76,7 +77,7 @@ class CartItem extends Model
 	}
 	public function storeItem(): ?int
 	{
-		$this->setHiddenProps('product', 'id');
+		$this->setHiddenProps('database', 'product');
 		return $this->save();
 	}
 	public function updateQuantity(): void
@@ -87,6 +88,12 @@ class CartItem extends Model
 	private function count(): ?int
 	{
 		return $this->getCount('quantity', 'productId', $this->productId);
+	}
+	public function delete(): ?int
+	{
+		$this->setHiddenProps('database','product');
+
+		return $this->destroy();
 	}
 
 }
