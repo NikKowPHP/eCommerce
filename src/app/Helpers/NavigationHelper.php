@@ -7,7 +7,7 @@ class NavigationHelper
 	public static function isLinkActive(string $url, string $currentUrl): string
 	{
 		if ($url === $currentUrl) {
-			return 'active';
+			return 'font-bold';
 		}
 		return '';
 	}
