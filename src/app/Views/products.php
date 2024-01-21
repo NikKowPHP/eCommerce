@@ -11,11 +11,10 @@
 				$userItem = $getUserItem($product->getId());
 				$userCartItemQuantity = $userItem->getQuantity();
 			}
-
 			?>
 
 			<div class="card col-md-6 mb-3 mx-4">
-					<img class="card-img-top" src="<?= $product->getThumbnail() ?>" alt="product image">
+				<img class="card-img-top" src="<?= $product->getThumbnail() ?>" alt="product image">
 				<div class="card-body pb-4 px-4 ">
 					<h5 class="card-title">
 						<?= $product->getName() ?>
@@ -27,9 +26,8 @@
 				</div>
 				<div class="card-footer pb-4">
 					<?php if ($isProductInCart): ?>
-						<form action="/products/remove" method="GET">
+						<form action="/products/remove" method="POST">
 							<input type="hidden" name="productId" value=<?= $product->getId() ?>>
-							<input type="hidden" name="_method" value="POST">
 
 							<div class="form__footer-control d-flex justify-content-center">
 								<input class="w-25 form-control m-2" type="number" name="quantity" value="<?= $userCartItemQuantity ?>">
@@ -40,10 +38,12 @@
 					<?php else: ?>
 						<form action="/products" method="POST">
 							<input type="hidden" name="productId" value=<?= $product->getId() ?>>
-							<button class="btn btn-primary" type="submit">Add to cart</button>
-							<label>
-								<input class="w-50%  form-control" type="number" name="quantity" value="<?= $userCartItemQuantity ?>">
-							</label>
+
+							<div class="form__footer-control d-flex justify-content-center">
+								<input class="w-25 form-control m-2" type="number" name="quantity"
+									value="<?= $userCartItemQuantity ?? 1 ?>">
+								<button class="btn btn-primary" type="submit">Add to cart</button>
+							</div>
 						</form>
 					<?php endif; ?>
 				</div>
