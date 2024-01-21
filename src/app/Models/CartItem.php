@@ -70,6 +70,10 @@ class CartItem extends Model
 	{
 		$this->productId = $productId;
 	}
+	public function setProduct(Product $product): void
+	{
+		$this->product = $product;
+	}
 
 	public function setQuantity(int $quantity): void
 	{
