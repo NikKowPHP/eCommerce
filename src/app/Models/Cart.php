@@ -38,6 +38,18 @@ class Cart extends Model
 	{
 		$this->createdAt = $createdAt;
 	}
+	public function findItem(Product $product): ?CartItem
+	{
+
+		$conditions = [
+			['where' => 'cartId', 'value' => $this->id],
+			['where' => 'productId', 'value' => $product->getId()]
+		];
+		$foundItem = (new CartItem())->findWithConditions($conditions);
+		if($foundItem) $foundItem->setProduct($product);
+		return $foundItem;
+
+	}
 	public function findItems(): array
 	{
 		$cartItem = new CartItem();
