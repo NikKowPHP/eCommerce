@@ -7,7 +7,7 @@ $routes = [
 	'POST /logout' => 'LogoutController@logout',
 
 	'GET /products' => 'ProductController@index',
-	'GET /products/{id}' => 'ProductController@show',
+	'GET /product/{id}' => 'ProductController@show',
 	'GET /cart' => 'CartController@index',
 	'POST /products' => 'CartController@addProduct',
 	'POST /products/remove' => 'CartController@removeItemFromCart',
