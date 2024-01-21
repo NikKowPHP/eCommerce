@@ -72,7 +72,7 @@ abstract class Model
 		}
 
 	}
-	public function update(): bool
+	public function update(): ?int
 	{
 		try {
 			$this->initDatabase();
@@ -93,11 +93,12 @@ abstract class Model
 			}
 			$stmt->bindValue(':id', $this->getId());
 
-			return $stmt->execute();
+			$stmt->execute();
+			return $stmt->rowCount();
 
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
-			return false;
+			return null;
 		}
 
 	}
@@ -148,6 +149,39 @@ abstract class Model
 		}
 	}
 
+	protected function findWithConditions(array $conditions): ?static
+	{
+
+		try {
+			$this->initDatabase();
+			$pdo = $this->database->getConnection();
+			$query = "SELECT * FROM " . $this->getTableName() . " WHERE ";
+
+			foreach ($conditions as $index => $condition) {
+				$column = $condition['where'] ?? 'id';
+				$value = $condition['value'] ?? null;
+				$query .= ($index > 0 ? ' AND ' : '') . "$column = :value";
+
+			}
+			$stmt = $pdo->prepare($query);
+			foreach ($conditions as $index => $condition) {
+				$value = $condition['value'] ?? null;
+				$stmt->bindParam(':value', $value);
+			}
+			$stmt->execute();
+			$foundData = $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+			if ($foundData) {
+				$foundData = $this->convertRow($foundData);
+				$this->instantiate($foundData);
+				return $this;
+			}
+			return null;
+		} catch (\PDOException $e) {
+			echo "Connection failed: " . $e->getMessage();
+			return null;
+		}
+
+	}
 	public function read(int|string $value, ?string $column = null): ?static
 	{
 		try {
@@ -171,7 +205,7 @@ abstract class Model
 			return null;
 		}
 	}
-	protected function destroy(): ?bool
+	protected function destroy(): ?int
 	{
 		try {
 			$pdo = $this->database->getConnection();
@@ -180,7 +214,8 @@ abstract class Model
 
 			$stmt = $pdo->prepare($query);
 			$stmt->bindParam(':id', $id);
-			return $stmt->execute();
+			$stmt->execute();
+			return $stmt->rowCount();
 
 		} catch (\PDOException $e) {
 			echo "Connection failed: " . $e->getMessage();
@@ -244,7 +279,7 @@ abstract class Model
 			}
 			$stmt->execute();
 			$allData = $stmt->fetch(\PDO::FETCH_ASSOC);
-			return (int)$allData['count'] ?? null;
+			return (int) $allData['count'] ?? null;
 
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
