@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Database\Database;
 use App\Models\CartItem;
 use App\Models\Image;
 use App\Models\Product;
@@ -12,11 +13,16 @@ use App\Utils\Auth;
 class ProductController extends AbstractController
 {
 	use CartItemOperationsTrait;
+	private Database $database;
+	public function __construct(Database $database)
+	{
+		$this->database = $database;
+	}
 	public function index(): void
 	{
-		$product = new Product();
+		$product = new Product($this->database);
 		$products = $product->findAll();
-		$userCart = (new Cart())->read(Auth::getUserId(), 'userId');
+		$userCart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
 		$userCartItems = $this->getUserCartItems($userCart);
 		$this->updateUserCartItemsQuantity($userCartItems);
 
@@ -53,9 +59,9 @@ class ProductController extends AbstractController
 	}
 	public function show(int $id): void
 	{
-		$product = new Product();
+		$product = new Product($this->database);
 		$product->read($id);
-		$image = new Image();
+		$image = new Image($this->database);
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
 		$cart = (new Cart())->read(Auth::getUserId(), 'userId');

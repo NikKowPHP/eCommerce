@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Model;
 use App\Models\File;
+use App\Database\Database;
 
 
 class Image extends File
@@ -11,10 +12,11 @@ class Image extends File
 	private int $id;
 	private int $productId;
 	private string $imageUrl;
-	public function __construct(int $productId = 0, string $imageUrl = '')
+	public function __construct(Database $database, int $productId = 0, string $imageUrl = '')
 	{
 		$this->productId = $productId;
 		$this->imageUrl = $imageUrl;
+		parent::__construct($database);
 	}
 	public function getTableName(): string
 	{

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Models;
 
+use App\Database\Database;
 use App\Models\Model;
 
 
@@ -16,6 +17,7 @@ class Product extends Model
 	private string $tableName;
 
 	public function __construct(
+		Database $database,
 		string $name = '',
 		string $description = '',
 		float $price = 0.0,
@@ -24,7 +26,7 @@ class Product extends Model
 		$this->description = $description;
 		$this->price = $price;
 		$this->tableName = 'products';
-		parent::__construct();
+		parent::__construct($database);
 	}
 	public function setId(int|string $id): void
 	{

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Models;
 
+use App\Database\Database;
 use App\Models\Model;
 use App\Models\Product;
 use App\Utils\Auth;
@@ -15,11 +16,12 @@ class CartItem extends Model
 	private int $quantity;
 	private Product $product;
 
-	public function __construct(int $cartId = 0, int $productId = 0, int $quantity = 1)
+	public function __construct(Database $database, int $cartId = 0, int $productId = 0, int $quantity = 1)
 	{
 		$this->cartId = $cartId;
 		$this->productId = $productId;
 		$this->quantity = $quantity;
+		parent::__construct($database);
 	}
 	public function getTableName(): string
 	{
@@ -50,7 +52,7 @@ class CartItem extends Model
 	}
 	public function findProduct(int $productId): self
 	{
-		$product = (new Product())->read($productId);
+		$product = (new Product($this->database))->read($productId);
 		$this->product = $product;
 		return $this;
 	}

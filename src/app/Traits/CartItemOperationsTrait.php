@@ -21,7 +21,7 @@ trait CartItemOperationsTrait
 	}
 	private function getUserCartItems(Cart $userCart): ?array
 	{
-		return (new CartItem)->findAllBy('cartId', $userCart->getId()) ?? null;
+		return (new CartItem($this->database))->findAllBy('cartId', $userCart->getId()) ?? null;
 	}
 
 }

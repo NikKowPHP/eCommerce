@@ -10,13 +10,19 @@ use App\Models\Cart;
 use App\Utils\SessionManager;
 use App\Utils\Location;
 use App\Models\CartItem;
+use App\Database\Database;
 
 class CartController extends AbstractController
 {
 	use CartItemOperationsTrait;
+	private Database $database;
+	public function __construct(Database $database)
+	{
+		$this->database = $database;
+	}
 	public function index(): void
 	{
-		$cart = (new Cart())->read(Auth::getUserId(), 'userId');
+		$cart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
 		$cart->findItems();
 
 		$viewPath = __DIR__ . '/../Views/cart.php';
@@ -25,9 +31,9 @@ class CartController extends AbstractController
 	}
 	public function show(int $id): void
 	{
-		$product = new Product();
+		$product = new Product($this->database);
 		$product->read($id);
-		$image = new Image();
+		$image = new Image($this->database);
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
 		$viewPath = __DIR__ . '/../Views/product.php';
@@ -38,12 +44,12 @@ class CartController extends AbstractController
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$productId = $_POST['productId'];
 
-			$product = (new Product())->read($productId);
-			$cart = (new Cart())->find();
+			$product = (new Product($this->database))->read($productId);
+			$cart = (new Cart($this->database))->find();
 			if ($cart) {
 				$cartItemId = $cart->addItem($product);
 			} else {
-				$cart = new Cart(Auth::getUserId());
+				$cart = new Cart($this->database,Auth::getUserId());
 				$cart->store();
 			}
 			$cartItemId = $cart->addItem($product);
@@ -63,7 +69,7 @@ class CartController extends AbstractController
 			if (isset($_POST['productId'])) {
 				$productId = (int) $_POST['productId'];
 				$quantityToRemove = (int) $_POST['quantity'];
-				$userCart = (new Cart())->read(Auth::getUserId(), 'userId');
+				$userCart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
 				$userCartItems = $this->getUserCartItems($userCart);
 
 				$userItem = $this->getUserItem($productId, $userCartItems);
@@ -100,7 +106,7 @@ class CartController extends AbstractController
 			['where' => 'cartId', 'value' => $cartId],
 			['where' => 'productId', 'value' => $productId]
 		];
-		return (new CartItem())->findWithConditions($conditions) ?? null;
+		return (new CartItem($this->database))->findWithConditions($conditions) ?? null;
 	}
 
 

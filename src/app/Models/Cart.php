@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Models;
 
+use App\Database\Database;
 use App\Models\Model;
 use App\Models\CartItem;
 use App\Utils\Auth;
@@ -15,12 +16,12 @@ class Cart extends Model
 	private array $items;
 
 
-	public function __construct(int $userId = 0, array $items = [])
+	public function __construct(Database $database, int $userId = 0, array $items = [])
 	{
 		$this->userId = $userId;
 		$this->items = $items;
 
-		parent::__construct();
+		parent::__construct($database);
 	}
 	public function getTableName(): string
 	{
@@ -45,14 +46,15 @@ class Cart extends Model
 			['where' => 'cartId', 'value' => $this->id],
 			['where' => 'productId', 'value' => $product->getId()]
 		];
-		$foundItem = (new CartItem())->findWithConditions($conditions);
-		if($foundItem) $foundItem->setProduct($product);
+		$foundItem = (new CartItem($this->database))->findWithConditions($conditions);
+		if ($foundItem)
+			$foundItem->setProduct($product);
 		return $foundItem;
 
 	}
 	public function findItems(): array
 	{
-		$cartItem = new CartItem();
+		$cartItem = new CartItem($this->database);
 		$cartItems = $cartItem->findAllBy('cartId', $this->id);
 
 		// Instantiate product inside cartItem
@@ -70,13 +72,13 @@ class Cart extends Model
 			['where' => 'cartId', 'value' => $this->id],
 			['where' => 'productId', 'value' => $product->getId()]
 		];
-		$foundItem = (new CartItem())->findWithConditions($conditions);
+		$foundItem = (new CartItem($this->database))->findWithConditions($conditions);
 		if ($foundItem) {
 			$foundItem->setHiddenProps('product');
 			$foundItem->setQuantity($quantity);
 			return $foundItem->update();
 		}
-		$cartItem = new CartItem($this->id, $product->getId(), $quantity);
+		$cartItem = new CartItem($this->database, $this->id, $product->getId(), $quantity);
 		return $cartItem->storeItem();
 	}
 	public function store(): ?int
@@ -108,16 +110,16 @@ class Cart extends Model
 	{
 		return $this->items;
 	}
-	public function getCheckoutPrice():?float
+	public function getCheckoutPrice(): ?float
 	{
 		return $this->calculateCart();
 
 	}
-	private function calculateCart():?float
+	private function calculateCart(): ?float
 	{
 		$cartItems = $this->getItems();
 		$price = 0;
-		foreach($cartItems as $cartItem) {
+		foreach ($cartItems as $cartItem) {
 			$itemPrice = $cartItem->getProduct()->getPrice();
 			$price += $itemPrice;
 		}

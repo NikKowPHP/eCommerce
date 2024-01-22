@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace App;
+use App\Database\Database;
 
 class Router
 {
@@ -18,9 +19,6 @@ class Router
 			if ($method === $routeMethod && $this->matchRoute($routeUri, $uri)) {
 				return $this->handleRoute($handler, $namespace);
 			}
-			// if ($this->matchRoute($route, $method, $uri)) {
-			// 	return $this->handleRoute($handler);
-			// }
 		}
 		return null;
 	}
@@ -40,10 +38,10 @@ class Router
 	}
 	protected function handleRoute(string $handler, string $namespace): mixed
 	{
+		$database = new Database();
 		list($controller, $action) = explode('@', $handler);
-		// $namespace = 'App\Controllers\\';
 		$controller = $namespace . $controller;
-		$controllerInstance = new $controller();
+		$controllerInstance = new $controller($database);
 		$param = isset($this->parametr) ? $this->parametr : null;
 		return $controllerInstance->$action($param);
 	}

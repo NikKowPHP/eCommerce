@@ -11,9 +11,10 @@ abstract class Model
 
 	protected static array $hiddenProps = [];
 
-	public function __construct()
+	public function __construct(Database $database)
 	{
-		$this->initDatabase();
+		// $this->initDatabase();
+		$this->database = $database;
 	}
 	protected function initDatabase(): void
 	{
@@ -115,7 +116,7 @@ abstract class Model
 			$convertedData = $this->convertRows($allData);
 			if ($convertedData) {
 				return array_map(function ($item) {
-					$instance = new static();
+					$instance = new static($this->database);
 					return $instance->instantiate($item);
 				}, $convertedData);
 			}
@@ -138,7 +139,7 @@ abstract class Model
 			$convertedData = $this->convertRows($allData);
 			if ($convertedData) {
 				return array_map(function ($item) {
-					$instance = new static();
+					$instance = new static($this->database);
 					return $instance->instantiate($item);
 				}, $convertedData);
 			}
