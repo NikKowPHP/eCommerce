@@ -100,19 +100,15 @@ abstract class Model
 	public function findAll(): array
 	{
 		try {
-			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName();
-			$stmt = $pdo->prepare($query);
-			$stmt->execute();
-			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+			$allData = $this->dbOperations->fetchAll($query);
 			$convertedData = $this->convertRows($allData);
-			if ($convertedData) {
-				return array_map(function ($item) {
-					$instance = new static($this->database);
-					return $instance->instantiate($item);
-				}, $convertedData);
-			}
-			return [];
+
+			return array_map(function ($item) {
+				$instance = new static($this->database);
+				return $instance->instantiate($item);
+			}, $convertedData) ?: [];
+
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
 			return [];
