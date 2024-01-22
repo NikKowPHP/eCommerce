@@ -26,17 +26,17 @@ class DatabaseModelService
 		$stmt->execute();
 		return $stmt;
 	}
-	protected function fetchAll(string $query, array $params = []): array
+	public function fetchAll(string $query, array $params = []): array
 	{
 		$stmt = $this->executeQuery($query, $params);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 	}
-	protected function fetch(string $query, array $params = []): ?array
+	public function fetch(string $query, array $params = []): ?array
 	{
 		$stmt = $this->executeQuery($query, $params);
 		return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 	}
-	protected function insertAndGetLastId(string $query, array $params): ?int
+	public function insertAndGetLastId(string $query, array $params): ?int
 	{
 		$pdo = $this->database->getConnection();
 		$stmt = $this->executeQuery($query, $params);
@@ -48,6 +48,11 @@ class DatabaseModelService
 			return null;
 		}
 		return null;
+	}
+	public function executeUpdate(string $query, array $params): ?int
+	{
+		$stmt = $this->executeQuery($query, $params);
+		return $stmt ? $stmt->rowCount() : null;
 	}
 
 

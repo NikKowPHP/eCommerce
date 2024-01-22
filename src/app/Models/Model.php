@@ -53,7 +53,6 @@ abstract class Model
 	protected function save(): ?int
 	{
 		try {
-			$this->initDatabase();
 			$fields = $this->getVisibleProps();
 
 			$fieldNames = implode(', ', array_keys($fields));
@@ -67,7 +66,7 @@ abstract class Model
 			}
 			$stmt->execute();
 			$lastInsertId = $pdo->lastInsertId();
-			$lastInsertId = $this->dbOperations->insertAndGetLastId($query,$fields);
+			$lastInsertId = $this->dbOperations->insertAndGetLastId($query, $fields);
 
 			return $lastInsertId ? (int) $lastInsertId : null;
 
@@ -80,26 +79,16 @@ abstract class Model
 	public function update(): ?int
 	{
 		try {
-			$this->initDatabase();
 			$fields = $this->getVisibleProps();
-
 			$setStatements = [];
 			foreach ($fields as $key => $value) {
 				$setStatements[] = "$key = :$key";
 			}
 			$setClause = implode(', ', $setStatements);
-
-			$pdo = $this->database->getConnection();
 			$query = "UPDATE " . $this->getTableName() . " SET $setClause WHERE id = :id";
-			$stmt = $pdo->prepare($query);
 
-			foreach ($fields as $key => $value) {
-				$stmt->bindValue(":$key", $value);
-			}
-			$stmt->bindValue(':id', $this->getId());
-
-			$stmt->execute();
-			return $stmt->rowCount();
+			$rowCount = $this->dbOperations->executeUpdate($query, $fields + ['id' => $this->getId()]);
+			return $rowCount;
 
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
@@ -111,7 +100,6 @@ abstract class Model
 	public function findAll(): array
 	{
 		try {
-			$this->initDatabase();
 			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName();
 			$stmt = $pdo->prepare($query);
@@ -133,7 +121,6 @@ abstract class Model
 	public function findAllBy(string $where, string|int $value): array
 	{
 		try {
-			$this->initDatabase();
 			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName() . " WHERE $where = :value";
 			$stmt = $pdo->prepare($query);
@@ -158,7 +145,6 @@ abstract class Model
 	{
 
 		try {
-			$this->initDatabase();
 			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName() . " WHERE ";
 
