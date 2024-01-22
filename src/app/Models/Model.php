@@ -103,12 +103,7 @@ abstract class Model
 			$query = "SELECT * FROM " . $this->getTableName();
 			$allData = $this->dbOperations->fetchAll($query);
 			$convertedData = $this->convertRows($allData);
-
-			return array_map(function ($item) {
-				$instance = new static($this->database);
-				return $instance->instantiate($item);
-			}, $convertedData) ?: [];
-
+			return $this->instantiateArrayOfClasses($convertedData);
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
 			return [];
@@ -117,24 +112,32 @@ abstract class Model
 	public function findAllBy(string $where, string|int $value): array
 	{
 		try {
-			$pdo = $this->database->getConnection();
 			$query = "SELECT * FROM " . $this->getTableName() . " WHERE $where = :value";
-			$stmt = $pdo->prepare($query);
-			$stmt->bindParam(':value', $value);
-			$stmt->execute();
-			$allData = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+			$allData = $this->dbOperations->fetchAll($query, [':value' => $value]);
 			$convertedData = $this->convertRows($allData);
-			if ($convertedData) {
-				return array_map(function ($item) {
-					$instance = new static($this->database);
-					return $instance->instantiate($item);
-				}, $convertedData);
-			}
-			return [];
+			return $this->instantiateArrayOfClasses($convertedData);
 		} catch (\PDOException $e) {
 			echo "connection failed: " . $e->getMessage();
 			return [];
 		}
+	}
+	private function instantiateArrayOfClasses(array $classes): ?array
+	{
+		return array_map(function ($item) {
+			$instance = new static($this->database);
+			return $instance->instantiate($item);
+		}, $classes) ?: [];
+	}
+	
+	protected function executeDatabaseOperation(callable $operation):?callable
+	{
+		try {
+			return $operation();
+		} catch (\PDOException $e) {
+			echo "Error: ". $e->getMessage();
+			return null;
+		}
+
 	}
 
 	protected function findWithConditions(array $conditions): ?static
