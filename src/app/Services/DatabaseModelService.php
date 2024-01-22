@@ -36,6 +36,19 @@ class DatabaseModelService
 		$stmt = $this->executeQuery($query, $params);
 		return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 	}
+	protected function insertAndGetLastId(string $query, array $params): ?int
+	{
+		$pdo = $this->database->getConnection();
+		$stmt = $this->executeQuery($query, $params);
+		if ($stmt && $stmt->rowCount() > 0) {
+			$lastInsertId = $pdo->lastInsertId();
+			if ($lastInsertId !== null && $lastInsertId !== 0) {
+				return (int) $lastInsertId;
+			}
+			return null;
+		}
+		return null;
+	}
 
 
 }

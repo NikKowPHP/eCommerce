@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Database\Database;
+use App\Services\DatabaseModelService;
 use ReflectionProperty;
 
 abstract class Model
@@ -11,9 +12,11 @@ abstract class Model
 
 	protected static array $hiddenProps = [];
 
+	protected DatabaseModelService $dbOperations;
+
 	public function __construct(Database $database)
 	{
-		// $this->initDatabase();
+		$this->dbOperations = new DatabaseModelService($database);
 		$this->database = $database;
 	}
 	protected function initDatabase(): void
@@ -64,6 +67,7 @@ abstract class Model
 			}
 			$stmt->execute();
 			$lastInsertId = $pdo->lastInsertId();
+			$lastInsertId = $this->dbOperations->insertAndGetLastId($query,$fields);
 
 			return $lastInsertId ? (int) $lastInsertId : null;
 
