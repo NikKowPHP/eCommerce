@@ -20,22 +20,33 @@ class ProductController extends AbstractController
 	}
 	public function index(): void
 	{
-		$product = new Product($this->database);
-		$products = $product->findAll();
-		$userCart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
-		$userCartItems = $this->getUserCartItems($userCart);
-		$this->updateUserCartItemsQuantity($userCartItems);
-
-		$isProductInUserCart = function (int $productId) use ($userCartItems): bool {
-			return $this->isProductInCart($productId, $userCartItems);
-		};
-
-		$getUserItem = function (int $productId) use ($userCartItems): ?CartItem {
-			return $this->getUserItem($productId, $userCartItems);
-		};
 
 		$viewPath = __DIR__ . '/../Views/products.php';
+		$product = new Product($this->database);
+		$products = $product->findAll();
+		$userId = Auth::getUserId();
+
+		$isProductInUserCart = null;
+		$getUserItem = null;
+		$userCartItems = [];
+
+		if ($userId) {
+			$userCart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
+			$userCartItems = $this->getUserCartItems($userCart);
+			if (!empty($userCartItems)) {
+				$this->updateUserCartItemsQuantity($userCartItems);
+
+				$isProductInUserCart = function (int $productId) use ($userCartItems): bool {
+					return $this->isProductInCart($productId, $userCartItems);
+				};
+
+				$getUserItem = function (int $productId) use ($userCartItems): ?CartItem {
+					return $this->getUserItem($productId, $userCartItems);
+				};
+			}
+		}
 		$this->includeView($viewPath, ['products' => $products, 'userItems' => $userCartItems, 'isProductInUserCart' => $isProductInUserCart, 'getUserItem' => $getUserItem]);
+
 	}
 
 	private function isProductInCart(int $productId, ?array $userCartItems): bool
@@ -44,7 +55,8 @@ class ProductController extends AbstractController
 			foreach ($userCartItems as $userItem) {
 				if ($userItem->getProductId() === $productId) {
 					return true;
-				} }
+				}
+			}
 		}
 		return false;
 	}
@@ -64,9 +76,9 @@ class ProductController extends AbstractController
 		$image = new Image($this->database);
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
-		$cart = (new Cart())->read(Auth::getUserId(), 'userId');
+		$cart = (new Cart($this->database))->read(Auth::getUserId(), 'userId');
 		$cartItem = $cart->findItem($product);
 		$viewPath = __DIR__ . '/../Views/public/product.php';
-		$this->includeView($viewPath, ['cartItem' => $cartItem, 'product'=>$product]);
+		$this->includeView($viewPath, ['cartItem' => $cartItem, 'product' => $product]);
 	}
 }
