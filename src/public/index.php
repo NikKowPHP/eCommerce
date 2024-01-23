@@ -7,13 +7,16 @@ require_once("../vendor/autoload.php");
 require_once("../app/routes.php");
 
 use App\Router;
+use App\Utils\Container;
 
 SessionManager::startSession();
 
 echo SessionManager::getFlashMessage('success');
 echo SessionManager::getFlashMessage('failure');
+
+$container = new Container();
 // Instantiate the router
-$router = new Router($routes);
+$router = new Router(routes: $routes, container: $container);
 $method = $_SERVER["REQUEST_METHOD"];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 

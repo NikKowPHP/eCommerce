@@ -2,15 +2,19 @@
 declare(strict_types=1);
 namespace App;
 use App\Database\Database;
+use App\Utils\Container;
 
 class Router
 {
 	protected array $routes = [];
 	protected int $parametr;
 
-	public function __construct(array $routes)
+	protected Container $container;
+
+	public function __construct(array $routes, Container $container)
 	{
 		$this->routes = $routes;
+		$this->container = $container;
 	}
 	public function handleRequest(string $method, string $uri, string $namespace): mixed
 	{
@@ -41,6 +45,8 @@ class Router
 		$database = new Database();
 		list($controller, $action) = explode('@', $handler);
 		$controller = $namespace . $controller;
+
+		
 		$controllerInstance = new $controller($database);
 		$param = isset($this->parametr) ? $this->parametr : null;
 		return $controllerInstance->$action($param);
