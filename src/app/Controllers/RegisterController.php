@@ -7,9 +7,15 @@ use App\Models\User;
 use App\Utils\Location;
 use App\Utils\SessionManager;
 use App\Utils\Auth;
+use App\Database\Database;
 
 class RegisterController extends AbstractController
 {
+	private Database $database;
+	public function __construct(Database $database)
+	{
+		$this->database = $database;
+	}
 	public function register(): void
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,7 +29,7 @@ class RegisterController extends AbstractController
 			}
 
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-			$user = new User($username, $email, $hashedPassword);
+			$user = new User($this->database, $username, $email, $hashedPassword);
 			if ($user->register()) {
 				Auth::logIn($user->getId());
 				SessionManager::setFlashMessage('success', 'You have successfully created an account');

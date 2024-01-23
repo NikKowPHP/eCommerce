@@ -9,25 +9,28 @@ use App\Services\ProductService;
 use App\Utils\Location;
 use App\Utils\SessionManager;
 use App\Models\User;
+use App\Database\Database;
 
 class UserController extends AbstractAdminController
 {
 	private ProductService $productService;
+	private Database $database;
 
-	public function __construct()
+	public function __construct(Database $database)
 	{
-		$this->productService = new ProductService();
+		$this->productService = new ProductService($database);
+		$this->database = $database;
 	}
 
 	public function index(): void
 	{
-		$users = (new User())->findAll();
+		$users = (new User($this->database))->findAll();
 		$viewPath = __DIR__ . '/../../Views/admin/user/users.php';
 		$this->includeView($viewPath, ['users' => $users]);
 	}
 	public function show(int $id): void
 	{
-		$user = (new User())->read($id);
+		$user = (new User($this->database))->read($id);
 		$viewPath = __DIR__ . '/../../Views/admin/user/user.php';
 		$this->includeView($viewPath, ['user' => $user]);
 	}
@@ -45,7 +48,7 @@ class UserController extends AbstractAdminController
 			$password = $_POST['password'];
 
 			$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-			$user = new User($username, $email, $hashedPassword);
+			$user = new User($this->database,$username, $email, $hashedPassword);
 			if ($userId = $user->store()) {
 				SessionManager::setFlashMessage('success', "User {$user->getUsername()} has been stored");
 				Location::redirect('/admin/users');
@@ -58,7 +61,7 @@ class UserController extends AbstractAdminController
 	public function edit($id): void
 	{
 		$viewPath = __DIR__ . '/../../Views/admin/user/editUserForm.php';
-		$user = (new User())->read($id);
+		$user = (new User($this->database))->read($id);
 		$this->includeView($viewPath, ['user' => $user]);
 	}
 	// Updates the product
@@ -68,14 +71,14 @@ class UserController extends AbstractAdminController
 			$userId = (int) $_POST['id'];
 			var_dump($userId);
 
-			if (!(new User())->read($userId)) {
+			if (!(new User($this->database))->read($userId)) {
 				return false;
 			}
 			$username = trim($_POST['username']);
 			$email = trim($_POST['email']);
 			$password = $_POST['password'];
 
-			$user = new User($username, $email);
+			$user = new User($this->database,$username, $email);
 			$user->setHiddenProps('registrationDate');
 			if (empty($password) && $password === '') {
 				$user->setHiddenProps('password');
@@ -102,7 +105,7 @@ class UserController extends AbstractAdminController
 	{
 		// Checks whether hidden input with value _method exists
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_method']) && strtoupper($_POST['_method']) === 'DELETE') {
-			$user = (new User())->read($id);
+			$user = (new User($this->database))->read($id);
 			if ($user->getId()) {
 				if ($user->deleteUser()) {
 					SessionManager::setFlashMessage('success', "User {$user->getUsername()} has been deleted");

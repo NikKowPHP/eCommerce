@@ -21,11 +21,15 @@ class Product extends Model
 		string $name = '',
 		string $description = '',
 		float $price = 0.0,
+		string $thumbnail = '',
+		array $images = [],
 	) {
 		$this->name = $name;
 		$this->description = $description;
 		$this->price = $price;
 		$this->tableName = 'products';
+		$this->thumbnail = $thumbnail;
+		$this->images = $images;
 		parent::__construct($database);
 	}
 	public function setId(int|string $id): void

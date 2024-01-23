@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Models;
 
+use App\Database\Database;
 
 class User extends Model
 {
@@ -12,6 +13,7 @@ class User extends Model
 	private string $registrationDate;
 
 	public function __construct(
+		Database $database,
 		string $username = '',
 		string $email = '',
 		string $password = '',
@@ -21,7 +23,7 @@ class User extends Model
 		$this->username = $username;
 		$this->password = $password;
 		$this->registrationDate = $registrationDate;
-		parent::__construct();
+		parent::__construct($database);
 	}
 
 	public function getId(): int

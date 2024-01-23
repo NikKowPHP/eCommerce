@@ -7,9 +7,16 @@ use App\Utils\Location;
 use App\Utils\SessionManager;
 use App\Utils\Auth;
 use App\Utils\Validator;
+use App\Database\Database;
 
 class LoginController extends AbstractController
 {
+	private Database $database;
+
+	public function __construct(Database $database)
+	{
+		$this->database = $database;
+	}
 	public function login()
 	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +29,7 @@ class LoginController extends AbstractController
 				Location::redirect('/login');
 			}
 
-			$user = new User();
+			$user = new User($this->database);
 			$user->read($email, 'email');
 
 			if ($user->getId() && password_verify($inputPassword, $user->getPassword())) {

@@ -8,28 +8,31 @@ use App\Models\Product;
 use App\Services\ProductService;
 use App\Utils\Location;
 use App\Utils\SessionManager;
+use App\Database\Database;
 
 class ProductController extends AbstractAdminController
 {
 	private ProductService $productService;
-
-	public function __construct()
+	private Database $database;
+	public function __construct(Database $database)
 	{
-		$this->productService = new ProductService();
+		$this->database = $database;
+		$this->productService = new ProductService($database);
 	}
+
 
 	public function index(): void
 	{
-		$product = new Product();
+		$product = new Product($this->database);
 		$products = $product->findAll();
 		$viewPath = __DIR__ . '/../../Views/admin/product/products.php';
 		$this->includeView($viewPath, ['products' => $products]);
 	}
 	public function show(int $id): void
 	{
-		$product = new Product();
+		$product = new Product($this->database);
 		$product->read($id);
-		$image = new Image();
+		$image = new Image($this->database);
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
 		$viewPath = __DIR__ . '/../../Views/admin/product/product.php';
@@ -56,9 +59,9 @@ class ProductController extends AbstractAdminController
 	public function edit($id): void
 	{
 		$viewPath = __DIR__ . '/../../Views/admin/product/editProductView.php';
-		$product = new Product();
+		$product = new Product($this->database);
 		$product->read($id);
-		$image = new Image();
+		$image = new Image($this->database);
 		$images = $image->findAllBy('productId', $id);
 		$product->setImages($images);
 		$this->includeView($viewPath, ['product' => $product]);
@@ -69,7 +72,7 @@ class ProductController extends AbstractAdminController
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$productId = (int) $_POST['id'];
 
-			if (!(new Product())->read($productId)) {
+			if (!(new Product($this->database))->read($productId)) {
 				return false;
 			}
 			$name = $_POST['name'];
