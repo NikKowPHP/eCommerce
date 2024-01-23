@@ -1,53 +1,67 @@
 <?php
 declare(strict_types=1);
 namespace App\Utils;
+
 use App\Database\Database;
+use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Image;
 use App\Services\ProductService;
 use App\Controllers\ProductController;
-
-
 
 class Container
 {
 	protected array $instances = [];
+	protected Database $database;
 
+	public function __construct(Database $database)
+	{
+		$this->database = $database;
+	}
+
+	public function __call(string $name, array $args)
+	{
+		$method = 'get' . ucfirst($name);
+		if (method_exists($this, $method)) {
+			return call_user_func_array([$this, $method], $args);
+		}
+		throw new \BadMethodCallException("Method {$method} not found in " . static::class);
+	}
 	public function getDatabase(): Database
 	{
-		if (!isset($this->instances['database'])) {
-			$this->instances['database'] = new Database();
-		}
-		return $this->instances['database'];
+		return $this->database;
 	}
 
-	public function getProductModel(): Product
+	private function resolveDependencies(string $class):array
 	{
-		if (!isset($this->instances['productModel'])) {
-			$this->instances['productModel'] = new Product($this->getDatabase());
+		$reflection = new \ReflectionClass($class);
+		$constructor = $reflection->getConstructor();
+		if($constructor === null){
+			return [];
 		}
-		return $this->instances['productModel'];
+		$parameters = $constructor->getParameters();
+		$dependencies = [];
+		foreach($parameters as $parameter) {
+			$dependencyClass = $parameter->getType();
+			if($dependencyClass === null || $dependencyClass->isBuiltin()){
+				throw new \RuntimeException("Unable to resolve dependecy for parameter {$parameter->getName()} in {$class}.");
+			}
+			$dependencies[] = $this->getInstance($dependencyClass->getName());
+		}
+		return $dependencies;
 	}
-	public function getProductService(): ProductService
+
+	private function getInstance(string $class): mixed
 	{
-		if (!isset($this->instances['productService'])) {
-			$this->instances['productService'] = new ProductService($this->getDatabase());
+
+		if (!isset($this->instances[$class])) {
+			$dependencies = $this->resolveDependencies($class);
+
+			$this->instances[$class] = new $class(...$dependencies);
 		}
 
-		return $this->instances['productService'];
+		return $this->instances[$class];
+
 	}
-
-	public function getProductController(): ProductController
-	{
-		if (!isset($this->instances['productController'])) {
-			$this->instances['productController'] = new ProductController(
-				$this->getProductService(),
-				$this->getProductModel(),
-				$this->getImageModel()
-			);
-		}
-
-		return $this->instances['productController'];
-	}
-
 
 }
